@@ -16,7 +16,6 @@ body {
     box-sizing: border-box;
 }
 
-  
   .login-form {
     background: white;
     padding: 20px;
@@ -31,14 +30,14 @@ body {
     color: #566B6B;
   }
   
-  .form-group {
+  .login-form-group {
     display:flex;
     justify-content: center;
     margin-bottom: 15px;
     width: 100%;
   }
   
-  .form-group input {
+  .login-form-group input {
     width: 70%;
     padding: 8px;
     background-color: white;

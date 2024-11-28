@@ -1,8 +1,10 @@
-import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Link } from 'react-router-dom';
-import './App.css';
-import BarSide from './components/barside';
-import Login from './components/login';
+import React from "react";
+import { BrowserRouter as Router, Routes, Route, Link } from "react-router-dom";
+import "./App.css";
+import BarSide from "./components/sidebar";
+import Login from "./pages/login";
+import PatientRegister from "./pages/patient-register";
+import ProtectedRoute from "./components/protected-route";
 
 function App() {
   return (
@@ -25,6 +27,14 @@ function App() {
         />
         <Route path="/sidebar" element={<BarSide />} />
         <Route path="/login" element={<Login />} />
+        <Route
+          path="/patient-register"
+          element={
+            <ProtectedRoute>
+              <PatientRegister />
+            </ProtectedRoute>
+          }
+        />
       </Routes>
     </Router>
   );
