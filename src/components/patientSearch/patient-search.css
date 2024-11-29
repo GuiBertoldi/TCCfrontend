@@ -1,0 +1,19 @@
+.patient-search {
+    margin-top: 20px;
+    width: 100%;
+  }
+  
+  .patient-search h2 {
+    font-size: 24px;
+    margin-bottom: 15px;
+  }
+  
+  .patient-search .ant-input {
+    width: 100%;
+    margin-bottom: 10px;
+  }
+  
+  .patient-search .ant-btn {
+    width: 100%;
+  }
+  

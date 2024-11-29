@@ -1,6 +1,6 @@
 import React from "react";
-import { Link, useNavigate } from "react-router-dom";  // Importando Link e useNavigate
-import "./sidebar.css";
+import { Link, useNavigate } from "react-router-dom";
+import './sidebar.css';
 
 const Sidebar = () => {
   const navigate = useNavigate();
@@ -21,7 +21,7 @@ const Sidebar = () => {
           <Link to="/patients">Lista de Pacientes</Link>
         </li>
         <li>
-          <Link to="/sessions">Sessões</Link>
+          <Link to="/sessions">Sessões</Link> 
         </li>
       </ul>
       <button className="logout-button" onClick={handleLogout}>

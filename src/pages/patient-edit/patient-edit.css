@@ -1,0 +1,115 @@
+
+.patient-register-container {
+    display: flex;
+    flex-direction: column;
+    width: 90%;
+    max-width: 1200px;
+    align-items: center;
+    justify-content: center;
+    background: #fff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin-left: 250px; /* Isso vai empurrar o conteúdo para a direita, dando espaço para a sidebar */
+    padding: 20px;
+    width: calc(95% - 250px); /* Ajusta o conteúdo para ocupar o espaço restante */
+  }
+  
+  .patient-register-container h2 {
+    display: flex;
+    align-items: left;
+    width: 100%;
+    margin-left: 6rem;
+    margin-bottom: 0rem;
+    color: #566B6B;
+  }
+
+  .patient-register-form {
+    width: 90%;
+    max-width: 1000px;
+    display: flex;
+    flex-wrap: wrap;
+    padding: 2rem;
+  }
+  
+  .patient-form-group {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    text-align: left;
+    margin-bottom: 15px;
+    width: 25%;
+  }
+  
+  .patient-form-group label {
+    font-size: 13px;
+    font-weight: bold;
+    color: #566B6B;
+  }
+  
+  .patient-form-group input {
+    padding: 0.5rem;
+  
+    border: 1px solid #ccc;
+    border-radius: 10px;
+    min-width: 150px;
+    width: 80%;
+    padding: 8px;
+    background-color: white;
+    color: #566B6B;
+    border-radius: 12px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+  }
+
+  .button-group{
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    flex-wrap: wrap;
+    flex-direction: column;
+  }
+  
+  .register-button {
+    margin-right: 3rem;
+    width: 20%;
+    padding: 0.7rem;
+    background: linear-gradient(90deg, #589F8F 0%, #9DCDCD 100%);
+    color: white;
+    font-size: 1rem;
+    font-weight: bold;
+    border: none;
+    border-radius: 15px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    margin-bottom: 20px;
+  }
+  
+  .register-button:hover {
+    background: linear-gradient(to right, #9DCDCD, #589F8F);
+  }
+  
+  @media (max-width: 768px) {
+    .patient-register-form {
+      width: 90%;
+      padding: 1rem;
+    }
+  
+    .patient-form-group {
+      flex-direction: column;
+      gap: 1rem;
+    }
+  
+    .patient-form-group label {
+      font-size: 12px;
+      min-width: 100%;
+    }
+  
+    .patient-form-group input {
+      font-size: 14px;
+      min-width: 100%;
+    }
+  
+    .register-button {
+      padding: 1rem;
+    }
+  }
+  
