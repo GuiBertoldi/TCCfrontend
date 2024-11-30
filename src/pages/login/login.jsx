@@ -14,7 +14,7 @@ function Login() {
     setError("");
 
     try {
-      const response = await axios.post("http://localhost:8080/auth/login", {
+      const response = await axios.post("http://54.82.234.106:8080/auth/login", {
         email,
         password,
       });
