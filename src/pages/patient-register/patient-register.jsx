@@ -51,7 +51,7 @@ const PatientRegister = () => {
         return;
       }
 
-      const response = await axios.post("http://54.82.234.106:8080/patients", patientData, {
+      const response = await axios.post("https://54.82.234.106:8080/patients", patientData, {
         headers: {
           Authorization: `Bearer ${token}`,
         },

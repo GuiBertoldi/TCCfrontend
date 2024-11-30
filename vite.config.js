@@ -7,7 +7,7 @@ export default defineConfig({
   base: "/TCCfrontend",
   server: {
     proxy: {
-      '/auth': 'http://54.82.234.106:8080',
+      '/auth': 'https://54.82.234.106:8080',
     },
   },
 })

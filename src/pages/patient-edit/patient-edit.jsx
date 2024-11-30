@@ -68,7 +68,7 @@ const PatientEdit = () => {
         return;
       }
 
-      const response = await api.put(`http://54.82.234.106:8080/patients/${patientData.idPatient}`, patientData);
+      const response = await api.put(`https://54.82.234.106:8080/patients/${patientData.idPatient}`, patientData);
 
       alert("Paciente editado com sucesso!");
       setFormData({

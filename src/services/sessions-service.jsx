@@ -7,12 +7,12 @@ export const api = axios.create({
   },
 });
 
-export const fetchPatients = async () => {
+export const fetchSessionsByUserId = async () => {
   try {
-    const response = await api.get("/users/patients");
+    const response = await api.get(`/sessions/user`);
     return response.data;
   } catch (error) {
-    console.error("Erro ao buscar pacientes:", error);
+    console.error("Erro ao buscar sessões:", error);
     throw error;
   }
 };
