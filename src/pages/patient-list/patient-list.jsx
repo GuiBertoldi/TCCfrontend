@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchPatients } from "../../services/patient-service";
 import { Table,Button } from "antd";
-import { EditOutlined } from '@ant-design/icons';
+import { EditOutlined, UnorderedListOutlined} from '@ant-design/icons';
 import { Navigate, useNavigate} from "react-router-dom";
 import "./patient-list.css";
 
@@ -34,7 +34,7 @@ const PatientList = () => {
         key: "edit",
         title: "",
         render: (_,patient) => {
-          return <Button type="text" className="button-edit" onClick={() => handleClickEdit(patient)} icon={<EditOutlined />} />
+          return <Button type="text" className="button-edit" onClick={() => handleClickList(patient)} icon={<UnorderedListOutlined />} />
         },
         width: "70px"
       },
@@ -54,10 +54,14 @@ const PatientList = () => {
   }, []);
 
   const handleClickEdit = (patient) => {
-    console.log(patient);
     
   navigate(`/patient-edit/${patient.idUser}`)
   }
+
+  const handleClickList = (patient) => {
+    
+    navigate(`/sessions-list/${patient.idUser}`)
+    }
 
   return (
     <div className="patient-list-page">

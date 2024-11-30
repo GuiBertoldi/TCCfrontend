@@ -21,7 +21,6 @@ function Login() {
       const token = response.data.token;
       localStorage.setItem("token", token);
 
-      alert("Login bem-sucedido!");
       navigate("/patient-register");
     } catch (err) {
       console.error(err);
