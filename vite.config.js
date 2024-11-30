@@ -5,4 +5,9 @@ import react from '@vitejs/plugin-react'
 export default defineConfig({
   plugins: [react()],
   base: "/TCCfrontend",
+  server: {
+    proxy: {
+      '/auth': 'http://54.82.234.106:8080',
+    },
+  },
 })
