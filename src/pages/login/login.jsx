@@ -1,6 +1,6 @@
 import React, { useState } from "react";
-import axios from "axios";
 import { useNavigate } from "react-router-dom";
+import { login } from '../../services/login-service'
 import "./login.css";
 
 function Login() {
@@ -9,24 +9,16 @@ function Login() {
   const [error, setError] = useState("");
   const navigate = useNavigate();
 
-  const handleLogin = async (e) => {
-    e.preventDefault();
-    setError("");
-
+  const handleLogin = async e => {
+    e.preventDefault()
+    setError('')
     try {
-      const response = await axios.post("https://54.82.234.106:8080/auth/login", {
-        email,
-        password,
-      });
-      const token = response.data.token;
-      localStorage.setItem("token", token);
-
-      navigate("/patient-register");
-    } catch (err) {
-      console.error(err);
-      setError("Login ou Senha inválido.");
+      await login({ email, password })
+      navigate('/patient-register')
+    } catch {
+      setError('Login ou Senha inválido.')
     }
-  };
+  }
 
   return (
     <form className="login-form" onSubmit={handleLogin}>

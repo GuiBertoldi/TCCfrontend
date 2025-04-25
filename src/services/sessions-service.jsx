@@ -1,18 +1,11 @@
-import axios from "axios";
+import api from "../axiosConfig"
 
-export const api = axios.create({
-  baseURL: "https://54.82.234.106:8080",
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  },
-});
+export async function fetchSessionsByUserId(userId) {
+  const { data } = await api.get(`/sessions/user/${userId}`)
+  return data
+}
 
-export const fetchSessionsByUserId = async () => {
-  try {
-    const response = await api.get(`/sessions/user`);
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao buscar sessões:", error);
-    throw error;
-  }
-};
+export async function createSession(payload) {
+  const { data } = await api.post("/sessions", payload)
+  return data
+}

@@ -1,18 +1,30 @@
-import axios from "axios";
+import api from '../axiosConfig'
 
-export const api = axios.create({
-  baseURL: "https://54.82.234.106:8080",
-  headers: {
-    Authorization: `Bearer ${localStorage.getItem("token")}`,
-  },
-});
+export async function fetchPatients() {
+  const { data } = await api.get('/users/patients')
+  return data
+}
 
-export const fetchPatients = async () => {
-  try {
-    const response = await api.get("/users/patients");
-    return response.data;
-  } catch (error) {
-    console.error("Erro ao buscar pacientes:", error);
-    throw error;
-  }
-};
+export async function fetchPatientById(id) {
+  const { data } = await api.get(`/patients/search/${id}`)
+  return data
+}
+
+export async function createPatient(patientData) {
+  const { data } = await api.post('/patients', patientData)
+  return data
+}
+
+export async function updatePatient(id, patientData) {
+  const { data } = await api.put(`/patients/${id}`, patientData)
+  return data
+}
+
+export async function deletePatient(id) {
+  await api.delete(`/patients/${id}`)
+}
+
+export async function fetchUserById(id) {
+  const { data } = await api.get(`/users/search/${id}`)
+  return data
+}
