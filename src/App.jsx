@@ -39,7 +39,7 @@ function App() {
           <Route path="/patient-details/:id" element={<PatientDetails />} />
           <Route path="/sessions" element={<SessionForm />} />
           <Route path="/sessions-edit" element={<SessionEdit />} />
-          <Route path="/sessions-list" element={<SessionList />} />
+          <Route path="/sessions-list/:idUser" element={<SessionList />} />
         </ProtectedRoute>
       </Routes>
     </ConfigProvider>

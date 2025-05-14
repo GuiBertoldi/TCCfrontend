@@ -4,10 +4,7 @@ import { Form, Input, Button, DatePicker, Select, message } from "antd";
 import moment from "moment";
 import { jwtDecode } from "jwt-decode";
 
-import {
-  fetchPatients,
-  fetchUserById
-} from "../../services/patient-service";
+import {fetchPatients, fetchUserById} from "../../services/patient-service";
 import { createSession } from "../../services/sessions-service";
 import "./session.css";
 
@@ -18,7 +15,6 @@ export default function SessionForm() {
 
   useEffect(() => {
     async function loadData() {
-      // 1) valida e decodifica token
       const token = localStorage.getItem("token");
       if (!token) {
         message.error("Token não encontrado. Faça login.");
@@ -33,17 +29,15 @@ export default function SessionForm() {
         return;
       }
 
-      // 2) busca pacientes e monta options
       try {
         const patients = await fetchPatients();
         setPatientsOptions(
-          patients.map(p => ({ value: p.idUser, label: p.name }))
+          patients.map(p => ({value: p.idUser, label: p.name }))
         );
       } catch {
         message.error("Erro ao carregar pacientes.");
       }
 
-      // 3) busca dados do psicólogo e seta option
       try {
         const user = await fetchUserById(userId);
         setPsychologistOption({ value: userId, label: user.name });
