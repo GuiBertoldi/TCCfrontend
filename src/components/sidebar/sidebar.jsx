@@ -21,7 +21,10 @@ const Sidebar = () => {
           <Link to="/patients">Lista de Pacientes</Link>
         </li>
         <li>
-          <Link to="/sessions">Sessões</Link> 
+          <Link to="/sessions">Sessões</Link>
+        </li>
+        <li>
+          <Link to="/appointments">Agendamentos</Link>
         </li>
       </ul>
       <button className="logout-button" onClick={handleLogout}>
