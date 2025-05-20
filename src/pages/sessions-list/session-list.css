@@ -1,28 +1,30 @@
-.patient-list-page{
+.session-list-page {
   width: 100%;
-height: 100%;
-padding: 50px 0;
-margin-left: 250px;
+  height: 100%;
+  padding: 50px 0;
+  margin-left: 250px; /* mantém o espaço do sidebar */
 }
 
-.patient-content{
+.session-content {
   display: flex;
-  align-items: center;
+  align-items: flex-start; /* para o conteúdo começar no topo */
   justify-content: center;
   width: 80%;
   flex-direction: column;
   background: #fff;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    border-radius: 10px;
-    padding: 30px 40px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  border-radius: 10px;
+  padding: 30px 40px;
+  min-height: 500px;
+  overflow-x: hidden; 
 }
 
-.patient-content .button-edit{
+.session-content .button-edit {
   width: auto;
   background-color: #fff;
   color: #000;
 }
 
-.patient-content .button-edit:hover{
+.session-content .button-edit:hover {
   border-color: #fff;
 }

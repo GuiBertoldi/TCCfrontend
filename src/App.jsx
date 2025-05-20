@@ -38,7 +38,7 @@ function App() {
           <Route path="/patients" element={<PatientList />} />
           <Route path="/patient-details/:id" element={<PatientDetails />} />
           <Route path="/sessions" element={<SessionForm />} />
-          <Route path="/sessions-edit" element={<SessionEdit />} />
+          <Route path="/session-edit/:idSession" element={<SessionEdit />} />
           <Route path="/sessions-list/:idUser" element={<SessionList />} />
         </ProtectedRoute>
       </Routes>

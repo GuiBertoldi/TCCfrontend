@@ -1,120 +1,70 @@
 import React, { useState, useEffect } from "react";
 import { Form, Input, Button, DatePicker, Select, message } from "antd";
 import moment from "moment";
-import { jwtDecode } from "jwt-decode";
-import { fetchPatients,  fetchUserById } from "../../services/patient-service";
-import { createSession } from "../../services/sessions-service";
-import "./session-edit.css";
+import { useParams, useNavigate } from "react-router-dom";
+import { fetchSessionById, updateSession } from "../../services/sessions-service";
 
-export default function SessionEdit() {
-  const [patientsOptions, setPatientsOptions] = useState([]);
-  const [psychologistOption, setPsychologistOption] = useState(null);
+export default function SessionEditForm() {
   const [form] = Form.useForm();
+  const { idSession } = useParams();
+  const navigate = useNavigate();
+  const [patientName, setPatientName] = useState("");
+  const [patientUserId, setPatientUserId] = useState(null);
+  const [psychologistOption, setPsychologistOption] = useState(null);
 
   useEffect(() => {
-    async function loadData() {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        message.error("Token não encontrado. Faça login.");
-        return;
-      }
-      let userId;
-      try {
-        userId = Number(jwtDecode(token).sub);
-      } catch {
-        message.error("Token inválido.");
-        return;
-      }
-      try {
-        const patients = await fetchPatients();
-        setPatientsOptions(
-          patients.map(p => ({ value: p.idUser, label: p.name }))
-        );
-      } catch {
-        message.error("Erro ao carregar pacientes.");
-      }
+    (async () => {
+      const sess = await fetchSessionById(idSession);
+      const patientId = sess.idPatient.idPatient;
+      const patientUser = sess.idPatient.idUser.idUser;
+      setPatientUserId(patientUser);
+      setPatientName(sess.idPatient.idUser.name);
+      const psychologistId = sess.idPsychologist.idPsychologist;
+      setPsychologistOption({ value: psychologistId, label: sess.idPsychologist.idUser.name });
 
-      try {
-        const user = await fetchUserById(userId);
-        setPsychologistOption({ value: userId, label: user.name });
-        form.setFieldValue("psychologistId", userId);
-      } catch {
-        message.error("Erro ao carregar dados do psicólogo.");
-      }
-    }
-
-    loadData();
-  }, [form]);
+      form.setFieldsValue({
+        patientId,
+        psychologistId,
+        sessionDate: moment(sess.sessionDate, "YYYY-MM-DD"),
+        reason: sess.reason,
+        description: sess.description
+      });
+    })();
+  }, [form, idSession]);
 
   const onFinish = async values => {
     const payload = {
-      patientId:      values.patientId,
-      psychologistId: values.psychologistId,
-      sessionDate:    values.sessionDate.format("YYYY-MM-DD"),
-      reason:         values.reason,
-      description:    values.description
+      patientId: values.patientId,
+      idUser: values.psychologistId,
+      sessionDate: values.sessionDate.format("YYYY-MM-DD"),
+      reason: values.reason,
+      description: values.description
     };
-
-    try {
-      await createSession(payload);
-      message.success("Sessão criada com sucesso!");
-      form.resetFields();
-    } catch {
-      message.error("Erro ao criar sessão.");
-    }
+    await updateSession(idSession, payload);
+    message.success("Sessão atualizada com sucesso!");
+    navigate(`/sessions-list/${patientUserId}`);
   };
 
   return (
-    <Form
-      form={form}
-      layout="vertical"
-      onFinish={onFinish}
-      style={{ maxWidth: 600, margin: "0 auto" }}
-    >
-      <Form.Item
-        label="Paciente"
-        name="patientId"
-        rules={[{ required: true, message: "Selecione o paciente!" }]}
-      >
-        <Select
-          placeholder="Selecione o paciente"
-          options={patientsOptions}
-        />
+    <Form form={form} layout="vertical" onFinish={onFinish} style={{ maxWidth: 600, margin: "0 auto" }}>
+      <Form.Item name="patientId" hidden>
+        <Input />
       </Form.Item>
-
-      <Form.Item
-        label="Psicólogo"
-        name="psychologistId"
-        rules={[{ required: true }]}
-        initialValue={psychologistOption?.value}
-      >
-        <Select
-          options={psychologistOption ? [psychologistOption] : []}
-          disabled
-        />
+      <Form.Item label="Paciente">
+        <Input value={patientName} disabled />
       </Form.Item>
-
-      <Form.Item
-        label="Data da Sessão"
-        name="sessionDate"
-        rules={[{ required: true, message: "Selecione a data da sessão!" }]}
-        initialValue={moment()}
-      >
-        <DatePicker style={{ width: "100%" }} />
+      <Form.Item label="Psicólogo" name="psychologistId" rules={[{ required: true }]}>
+        <Select options={psychologistOption ? [psychologistOption] : []} disabled />
       </Form.Item>
-
-      <Form.Item
-        label="Motivo"
-        name="reason"
-        rules={[{ required: true, message: "Informe o motivo da sessão!" }]}
-      >
+      <Form.Item label="Data da Sessão" name="sessionDate">
+        <DatePicker style={{ width: "100%" }} disabled />
+      </Form.Item>
+      <Form.Item label="Motivo" name="reason" rules={[{ required: true }]}>
         <Input.TextArea />
       </Form.Item>
-
       <Form.Item label="Descrição" name="description">
         <Input.TextArea />
       </Form.Item>
-
       <Form.Item>
         <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
           Salvar
