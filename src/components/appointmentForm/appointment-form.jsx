@@ -11,7 +11,7 @@ export default function AppointmentForm({
   onSaved,
   psychologists,
   patients,
-  initialValues // se for edição, contem { id, patient:{id}, psychologist:{id}, date, time, duration, status, notes }
+  initialValues
 }) {
   const [form] = Form.useForm();
 
@@ -20,7 +20,9 @@ export default function AppointmentForm({
       form.setFieldsValue({
         ...initialValues,
         date: moment(initialValues.date),
-        time: moment(initialValues.time, "HH:mm:ss")
+        time: moment(initialValues.time, "HH:mm:ss"),
+        patient: initialValues.patient ? String(initialValues.patient.idUser) : null,
+        psychologist: initialValues.psychologist ? String(initialValues.psychologist.idPsychologist) : null
       });
     } else {
       form.resetFields();
@@ -29,12 +31,17 @@ export default function AppointmentForm({
 
   const onOk = () => {
     form.validateFields().then(vals => {
+      const pacienteSelecionado = patients.find(pt => String(pt.idUser) === String(vals.patient));
+      const psicologoSelecionado = psychologists.find(ps => String(ps.idPsychologist) === String(vals.psychologist));
+
       const payload = {
-        ...initialValues,
         ...vals,
+        patient: pacienteSelecionado ? { idPatient: pacienteSelecionado.idPatient } : null,
+        psychologist: psicologoSelecionado ? { idPsychologist: psicologoSelecionado.idPsychologist } : null,
         date: vals.date.format("YYYY-MM-DD"),
         time: vals.time.format("HH:mm:ss")
       };
+
       const action = initialValues
         ? updateAppointment(initialValues.id, payload)
         : createAppointment(payload);
@@ -62,11 +69,13 @@ export default function AppointmentForm({
           name="patient"
           rules={[{ required: true, message: "Selecione o paciente" }]}
         >
-          <Select placeholder="Selecione">
-            {patients.map(pt => (
-              <Option key={pt.id} value={pt.id}>{pt.name}</Option>
-            ))}
-          </Select>
+          <Select
+            placeholder="Selecione"
+            options={patients.map(pt => ({
+              value: pt.idUser,
+              label: pt.name
+            }))}
+          />
         </Form.Item>
 
         <Form.Item
@@ -76,7 +85,9 @@ export default function AppointmentForm({
         >
           <Select placeholder="Selecione">
             {psychologists.map(ps => (
-              <Option key={ps.id} value={ps.id}>{ps.name}</Option>
+              <Option key={ps.idPsychologist} value={ps.idPsychologist}>
+                {ps.idUser.name}
+              </Option>
             ))}
           </Select>
         </Form.Item>

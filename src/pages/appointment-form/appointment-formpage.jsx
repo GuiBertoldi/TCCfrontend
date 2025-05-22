@@ -8,23 +8,26 @@ import { fetchPatients } from "../../services/patient-service";
 import { Spin, message } from "antd";
 
 export default function AppointmentFormPage() {
-  const { id } = useParams();           // :id da rota /appointments/edit/:id
+  const { id } = useParams();
   const navigate = useNavigate();
   const [initialValues, setInitial] = useState(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [psychologists, setPsychologists] = useState([]);
   const [patients, setPatients] = useState([]);
 
   useEffect(() => {
-    // carregar listas para selects
-    fetchPsychologists().then(setPsychologists).catch(() => message.error("Erro ao carregar psicólogos"));
-    fetchPatients().then(setPatients).catch(() => message.error("Erro ao carregar pacientes"));
+    Promise.all([fetchPsychologists(), fetchPatients()])
+      .then(([psyData, patData]) => {
+        setPsychologists(psyData.content || psyData);
+        setPatients(patData.content || patData);
+      })
+      .catch(() => message.error("Erro ao carregar psicólogos ou pacientes"))
+      .finally(() => setLoading(false));
 
     if (id) {
       setLoading(true);
       fetchAppointmentById(id)
         .then(appt => {
-          // form espera { id, patient: id, psychologist: id, date, time, duration, status, notes }
           setInitial({
             id: appt.id,
             patient: appt.patient.id,

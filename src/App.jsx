@@ -12,7 +12,8 @@ import SessionForm from "./pages/sessions/session";
 import SessionEdit from "./pages/sessions-edit/session-edit";
 import SessionList from "./pages/sessions-list/session-list";
 import AppointmentList from "./pages/appointment-list/appointment-list";
-import AppointmentFormPage from "./pages/appointment-form/appointment-form-page";
+import AppointmentFormPage from "./pages/appointment-form/appointment-formpage";
+import AppointmentNew from "./pages/appointment-new/appointment-new";
 import ptBR from "antd/es/locale/pt_BR";
 import { ConfigProvider } from "antd";
 
@@ -43,7 +44,7 @@ function App() {
           <Route path="/session-edit/:idSession" element={<SessionEdit />} />
           <Route path="/sessions-list/:idUser" element={<SessionList />} />
           <Route path="/appointments" element={<AppointmentList />} />
-          <Route path="/appointments/new" element={<AppointmentFormPage />} />
+          <Route path="/appointment-new" element={<AppointmentNew/>} />
           <Route path="/appointments/edit/:id" element={<AppointmentFormPage />} />
         </ProtectedRoute>
       </Routes>
