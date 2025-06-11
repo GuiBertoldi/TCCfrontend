@@ -1,158 +1,208 @@
-import React, { useEffect, useState } from "react";
-import { Table, Button, Select, DatePicker, Row, Col, message } from "antd";
-import { PlusOutlined, EditOutlined, DeleteOutlined } from "@ant-design/icons";
-import { useNavigate } from "react-router-dom";
-import moment from "moment";
-import { fetchAppointments, deleteAppointment } from "../../services/appointment-service";
-import "./appointment-list.css";
+// src/pages/appointment-list/appointment-list.jsx
+import React, { useEffect, useState } from 'react';
+import {
+  Table,
+  Button,
+  Drawer,
+  Form,
+  Select,
+  DatePicker,
+  TimePicker,
+  Input,
+  InputNumber,
+  message,
+  Space,
+  Popconfirm
+} from 'antd';
+import dayjs from 'dayjs';
+import {
+  fetchAppointments,
+  createAppointment,
+  updateAppointment,
+  deleteAppointment
+} from '../../services/appointment-service';
+import { fetchPsychologists } from '../../services/psychologist-service';
+import { fetchPatients } from '../../services/patient-service';
 
-const { RangePicker } = DatePicker;
-const { Option } = Select;
+const statusOptions = [
+  { label: 'SCHEDULED', value: 'SCHEDULED' },
+  { label: 'CONFIRMED', value: 'CONFIRMED' },
+  { label: 'CANCELLED', value: 'CANCELLED' }
+];
 
 export default function AppointmentList() {
-  const navigate = useNavigate();
+  const [filters, setFilters] = useState({});
   const [data, setData] = useState([]);
-  const [psychologists, setPsychologists] = useState([]); // você deve popular essa lista de algum serviço
-  const [filters, setFilters] = useState({ psychologistId: null, dateRange: null });
   const [loading, setLoading] = useState(false);
+  const [drawer, setDrawer] = useState({ visible: false, record: null });
+  const [form] = Form.useForm();
+  const [psychOptions, setPsychOptions] = useState([]);
+  const [patientOptions, setPatientOptions] = useState([]);
 
-  const load = () => {
-    setLoading(true);
-    fetchAppointments({
-      psychologistId: filters.psychologistId,
-      from: filters.dateRange?.[0],
-      to:   filters.dateRange?.[1]
-    })
-      .then(setData)
-      .catch(() => message.error("Erro ao carregar agendamentos"))
-      .finally(() => setLoading(false));
+  useEffect(() => {
+    (async () => {
+      try {
+        const pysRes = await fetchPsychologists();
+        const pysList = Array.isArray(pysRes) ? pysRes : pysRes.content || [];
+        setPsychOptions(
+          pysList.map(p => ({ value: p.idPsychologist, label: p.idUser.name }))
+        );
+
+        const patsRes = await fetchPatients();
+        const patsList = Array.isArray(patsRes) ? patsRes : patsRes.content || [];
+        setPatientOptions(
+          patsList.map(p => ({ value: p.idUser, label: p.name }))
+        );
+      } catch {
+        message.error('Erro ao carregar opções de psicólogos e pacientes');
+      }
+    })();
+  }, []);
+
+  useEffect(() => {
+    (async () => {
+      setLoading(true);
+      try {
+        const list = await fetchAppointments(filters);
+        setData(list);
+      } catch {
+        message.error('Erro ao carregar agendamentos');
+      } finally {
+        setLoading(false);
+      }
+    })();
+  }, [filters]);
+
+  const openDrawer = record => {
+    setDrawer({ visible: true, record });
+    if (record) {
+      form.setFieldsValue({
+        idPatient: record.patient.idUser,
+        idPsychologist: record.psychologist.idUser,
+        date: dayjs(record.date),
+        time: dayjs(record.time, 'HH:mm'),
+        duration: record.duration,
+        status: record.status,
+        notes: record.notes
+      });
+    } else {
+      form.resetFields();
+    }
   };
 
-  useEffect(load, [filters]);
+  const closeDrawer = () => {
+    setDrawer({ visible: false, record: null });
+    form.resetFields();
+  };
 
-  const onDelete = id => {
-    deleteAppointment(id)
-      .then(() => {
-        message.success("Agendamento removido");
-        load();
-      })
-      .catch(() => message.error("Não foi possível remover"));
+  const onFinish = async values => {
+    const payload = {
+      idPatient: values.idPatient,
+      idPsychologist: values.idPsychologist,
+      date: values.date.format('YYYY-MM-DD'),
+      time: values.time.format('HH:mm'),
+      duration: values.duration,
+      status: values.status,
+      notes: values.notes
+    };
+    try {
+      if (drawer.record) {
+        await updateAppointment(drawer.record.idAppointment, payload);
+        message.success('Agendamento atualizado');
+      } else {
+        await createAppointment(payload);
+        message.success('Agendamento criado');
+      }
+      closeDrawer();
+      setFilters(f => ({ ...f }));
+    } catch {
+      message.error('Erro ao salvar agendamento');
+    }
+  };
+
+  const onDelete = async id => {
+    try {
+      await deleteAppointment(id);
+      message.success('Agendamento removido');
+      setFilters(f => ({ ...f }));
+    } catch {
+      message.error('Erro ao remover');
+    }
   };
 
   const columns = [
+    { title: 'Data', dataIndex: 'date', render: d => dayjs(d).format('YYYY-MM-DD') },
+    { title: 'Horário', dataIndex: 'time' },
+    { title: 'Status', dataIndex: 'status' },
+    { title: 'Paciente', render: (_, rec) => rec.patient.idUser.name },
+    { title: 'Psicólogo', render: (_, rec) => rec.psychologist.idUser.name },
     {
-      title: "Data",
-      dataIndex: "date",
-      key: "date",
-      render: d => moment(d).format("DD/MM/YYYY")
-    },
-    {
-      title: "Horário",
-      dataIndex: "time",
-      key: "time",
-      render: t => moment(t, "HH:mm:ss").format("HH:mm")
-    },
-    {
-      title: "Paciente",
-      dataIndex: ["patient", "name"],
-      key: "patient"
-    },
-    {
-      title: "Psicólogo(a)",
-      dataIndex: ["psychologist", "name"],
-      key: "psychologist"
-    },
-    {
-      title: "Duração (min)",
-      dataIndex: "duration",
-      key: "duration",
-      width: 120
-    },
-    {
-      title: "Status",
-      dataIndex: "status",
-      key: "status",
-      width: 130
-    },
-    {
-      title: "Ações",
-      key: "actions",
-      width: 120,
-      render: (_, record) => (
-        <>
-          <Button
-            icon={<EditOutlined />}
-            type="text"
-            onClick={() => navigate(`/appointment-edit/${record.id}`)}
-          />
-          <Button
-            icon={<DeleteOutlined />}
-            type="text"
-            danger
-            onClick={() => onDelete(record.id)}
-          />
-        </>
+      title: 'Ações',
+      render: (_, rec) => (
+        <Space>
+          <Button size="small" onClick={() => openDrawer(rec)}>Editar</Button>
+          <Popconfirm title="Remover?" onConfirm={() => onDelete(rec.idAppointment)}>
+            <Button danger size="small">Deletar</Button>
+          </Popconfirm>
+        </Space>
       )
     }
   ];
 
   return (
-    <div className="appointment-list-page">
-      <div className="appointment-content">
-        <Row justify="space-between" align="middle" style={{ marginBottom: 16 }}>
-          <Col>
-            <Button
-              type="primary"
-              icon={<PlusOutlined />}
-              onClick={() => navigate("/appointment-new")}
-            >
-              Novo Agendamento
-            </Button>
-          </Col>
-          <Col>
-            <Row gutter={8}>
-              <Col>
-                <Select
-                  placeholder="Psicólogo"
-                  allowClear
-                  style={{ width: 200 }}
-                  value={filters.psychologistId}
-                  onChange={val => setFilters(f => ({ ...f, psychologistId: val }))}
-                >
-                  {psychologists.map(p => (
-                    <Option key={p.id} value={p.id}>
-                      {p.name}
-                    </Option>
-                  ))}
-                </Select>
-              </Col>
-              <Col>
-                <RangePicker
-                  format="DD/MM/YYYY"
-                  onChange={dates =>
-                    setFilters(f => ({
-                      ...f,
-                      dateRange:
-                        dates && dates.length === 2
-                          ? [dates[0].startOf("day"), dates[1].endOf("day")]
-                          : null
-                    }))
-                  }
-                />
-              </Col>
-            </Row>
-          </Col>
-        </Row>
-
-        <Table
-          columns={columns}
-          dataSource={data}
-          rowKey="id"
-          loading={loading}
-          scroll={{ y: 400 }}
-          pagination={{ pageSize: 10 }}
+    <div style={{ padding: 24 }}>
+      <Space style={{ marginBottom: 16 }}>
+        <Select
+          placeholder="Psicólogo"
+          style={{ width: 200 }}
+          options={psychOptions}
+          onChange={value => setFilters(f => ({ ...f, idPsychologist: value }))}
         />
-      </div>
+        <Select
+          placeholder="Paciente"
+          style={{ width: 200 }}
+          options={patientOptions}
+          onChange={value => setFilters(f => ({ ...f, idPatient: value }))}
+        />
+        <DatePicker
+          placeholder="Data"
+          onChange={d => setFilters(f => ({ ...f, date: d ? d.format('YYYY-MM-DD') : undefined }))}
+        />
+        <Select
+          placeholder="Status"
+          style={{ width: 160 }}
+          options={statusOptions}
+          onChange={value => setFilters(f => ({ ...f, status: value }))}
+        />
+        <Button type="primary" onClick={() => openDrawer()}>Novo</Button>
+      </Space>
+
+      <Table
+        rowKey="idAppointment"
+        loading={loading}
+        columns={columns}
+        dataSource={data}
+        pagination={false}
+      />
+
+      <Drawer
+        title={drawer.record ? 'Editar Agendamento' : 'Novo Agendamento'}
+        open={drawer.visible}
+        width={400}
+        onClose={closeDrawer}
+        destroyOnClose
+      >
+        <Form form={form} layout="vertical" onFinish={onFinish}>
+          <Form.Item name="idPatient" label="Paciente" rules={[{ required: true }]}> <Select options={patientOptions} /> </Form.Item>
+          <Form.Item name="idPsychologist" label="Psicólogo" rules={[{ required: true }]}> <Select options={psychOptions} /> </Form.Item>
+          <Form.Item name="date" label="Data" rules={[{ required: true }]}> <DatePicker style={{ width: '100%' }} /> </Form.Item>
+          <Form.Item name="time" label="Horário" rules={[{ required: true }]}> <TimePicker format="HH:mm" minuteStep={15} style={{ width: '100%' }} /> </Form.Item>
+          <Form.Item name="duration" label="Duração (min)" rules={[{ required: true }]}> <InputNumber min={1} style={{ width: '100%' }} /> </Form.Item>
+          <Form.Item name="status" label="Status" rules={[{ required: true }]}> <Select options={statusOptions} /> </Form.Item>
+          <Form.Item name="notes" label="Observações"> <Input.TextArea rows={3} /> </Form.Item>
+          <Form.Item> <Button type="primary" htmlType="submit" block>Salvar</Button> </Form.Item>
+        </Form>
+      </Drawer>
     </div>
   );
 }

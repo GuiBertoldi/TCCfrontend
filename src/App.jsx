@@ -14,6 +14,8 @@ import SessionList from "./pages/sessions-list/session-list";
 import AppointmentList from "./pages/appointment-list/appointment-list";
 import AppointmentFormPage from "./pages/appointment-form/appointment-formpage";
 import AppointmentNew from "./pages/appointment-new/appointment-new";
+import AvailabilityList from "./pages/availability-list/availability-list";
+import PsychologistList from "./pages/psychologist-list/psychologist-list";
 import ptBR from "antd/es/locale/pt_BR";
 import { ConfigProvider } from "antd";
 
@@ -44,8 +46,8 @@ function App() {
           <Route path="/session-edit/:idSession" element={<SessionEdit />} />
           <Route path="/sessions-list/:idUser" element={<SessionList />} />
           <Route path="/appointments" element={<AppointmentList />} />
-          <Route path="/appointment-new" element={<AppointmentNew/>} />
-          <Route path="/appointments/edit/:id" element={<AppointmentFormPage />} />
+          <Route path="/psychologists/:idPsychologist/availabilities" element={<AvailabilityList />} />
+          <Route path="/psychologists" element={<PsychologistList />} />
         </ProtectedRoute>
       </Routes>
     </ConfigProvider>

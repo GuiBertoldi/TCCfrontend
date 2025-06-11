@@ -1,16 +1,25 @@
-import api from '../axiosConfig'
+import api from '../axiosConfig';
 
-export const fetchAppointments = (params) =>
-  api.get("/appointments", { params }).then(res => res.data);
+export async function fetchAppointments(filters) {
+  const { data } = await api.get('/appointments', { params: filters });
+  return data.content;
+}
 
-export const fetchAppointmentById = (id) =>
-  api.get(`/appointments/${id}`).then(res => res.data);
+export async function fetchAppointmentById(idAppointment) {
+  const { data } = await api.get(`/appointments/${idAppointment}`);
+  return data;
+}
 
-export const createAppointment = (payload) =>
-  api.post("/appointments", payload).then(res => res.data);
+export async function createAppointment(payload) {
+  const { data } = await api.post('/appointments', payload);
+  return data;
+}
 
-export const updateAppointment = (id, payload) =>
-  api.put(`/appointments/${id}`, payload).then(res => res.data);
+export async function updateAppointment(idAppointment, payload) {
+  const { data } = await api.put(`/appointments/${idAppointment}`, payload);
+  return data;
+}
 
-export const deleteAppointment = (id) =>
-  api.delete(`/appointments/${id}`).then(res => res.data);
+export async function deleteAppointment(idAppointment) {
+  await api.delete(`/appointments/${idAppointment}`);
+}

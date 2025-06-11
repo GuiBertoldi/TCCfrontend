@@ -26,6 +26,9 @@ const Sidebar = () => {
         <li>
           <Link to="/appointments">Agendamentos</Link>
         </li>
+        <li>
+          <Link to="/psychologists">Disponibilidades</Link>
+        </li>
       </ul>
       <button className="logout-button" onClick={handleLogout}>
         Sair
