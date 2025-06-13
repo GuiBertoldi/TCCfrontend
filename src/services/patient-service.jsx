@@ -1,7 +1,12 @@
 import api from '../axiosConfig'
 
-export async function fetchPatients() {
+export async function fetchPatientsByUserId() {
   const { data } = await api.get('/users/patients')
+  return data
+}
+
+export async function fetchPatients() {
+  const { data } = await api.get('/patients')
   return data
 }
 

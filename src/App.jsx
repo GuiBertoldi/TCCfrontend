@@ -12,8 +12,6 @@ import SessionForm from "./pages/sessions/session";
 import SessionEdit from "./pages/sessions-edit/session-edit";
 import SessionList from "./pages/sessions-list/session-list";
 import AppointmentList from "./pages/appointment-list/appointment-list";
-import AppointmentFormPage from "./pages/appointment-form/appointment-formpage";
-import AppointmentNew from "./pages/appointment-new/appointment-new";
 import AvailabilityList from "./pages/availability-list/availability-list";
 import PsychologistList from "./pages/psychologist-list/psychologist-list";
 import ptBR from "antd/es/locale/pt_BR";

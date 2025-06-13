@@ -4,7 +4,7 @@ import { Form, Input, Button, DatePicker, Select, message } from "antd";
 import moment from "moment";
 import { jwtDecode } from "jwt-decode";
 
-import {fetchPatients, fetchUserById} from "../../services/patient-service";
+import {fetchPatientsByUserId, fetchUserById} from "../../services/patient-service";
 import { createSession } from "../../services/sessions-service";
 import "./session.css";
 
@@ -30,7 +30,7 @@ export default function SessionForm() {
       }
 
       try {
-        const patients = await fetchPatients();
+        const patients = await fetchPatientsByUserId();
         setPatientsOptions(
           patients.map(p => ({value: p.idUser, label: p.name }))
         );

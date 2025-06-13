@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { fetchPatients } from "../../services/patient-service";
+import { fetchPatientsByUserId } from "../../services/patient-service";
 import { Table, Input, Button } from "antd";
 import { EditOutlined, UnorderedListOutlined } from '@ant-design/icons';
 import { useNavigate } from "react-router-dom";
@@ -13,7 +13,7 @@ const PatientList = () => {
   const [page, setPage]           = useState(1);
 
   useEffect(() => {
-    fetchPatients().then(data => {
+    fetchPatientsByUserId().then(data => {
       setPatients(data);
       setFiltered(data);
     });
