@@ -1,70 +1,79 @@
-// src/pages/sessions/session.jsx
-import React, { useState, useEffect } from "react";
-import { Form, Input, Button, DatePicker, Select, message } from "antd";
-import moment from "moment";
-import { jwtDecode } from "jwt-decode";
+import React, { useEffect } from 'react';
+import {
+  Form,
+  Input,
+  Button,
+  DatePicker,
+  Select,
+  message,
+  Collapse
+} from 'antd';
+import moment from 'moment';
+import {jwtDecode} from 'jwt-decode';
 
-import {fetchPatientsByUserId, fetchUserById} from "../../services/patient-service";
-import { createSession } from "../../services/sessions-service";
-import "./session.css";
+import {
+  fetchPatientsByUserId,
+  fetchUserById
+} from '../../services/patient-service';
+import { createSession } from '../../services/sessions-service';
+import TreatmentManager from '../../components/TreatmentManager/TreatmentManager';
+import FollowupManager  from '../../components/FollowupManager/FollowupManager';
+
+import './session.css';
+
+const { Panel } = Collapse;
 
 export default function SessionForm() {
-  const [patientsOptions, setPatientsOptions]       = useState([]);
-  const [psychologistOption, setPsychologistOption] = useState(null);
+  const [patientsOptions, setPatientsOptions]       = React.useState([]);
+  const [psychologistOption, setPsychologistOption] = React.useState(null);
   const [form] = Form.useForm();
 
   useEffect(() => {
-    async function loadData() {
-      const token = localStorage.getItem("token");
-      if (!token) {
-        message.error("Token não encontrado. Faça login.");
-        return;
-      }
+    (async () => {
+      const token = localStorage.getItem('token');
+      if (!token) { message.error('Token não encontrado. Faça login.'); return; }
 
       let userId;
-      try {
-        userId = Number(jwtDecode(token).sub);
-      } catch {
-        message.error("Token inválido.");
-        return;
-      }
+      try { userId = Number(jwtDecode(token).sub); }
+      catch { message.error('Token inválido.'); return; }
 
       try {
         const patients = await fetchPatientsByUserId();
-        setPatientsOptions(
-          patients.map(p => ({value: p.idUser, label: p.name }))
-        );
+        setPatientsOptions(patients.map(p => ({
+          value: p.idUser,
+          label: p.name + " - CPF: " + p.cpf
+        })));
       } catch {
-        message.error("Erro ao carregar pacientes.");
+        message.error('Erro ao carregar pacientes.');
       }
 
       try {
         const user = await fetchUserById(userId);
-        setPsychologistOption({ value: userId, label: user.name });
-        form.setFieldValue("psychologistId", userId);
+        setPsychologistOption({ value: userId, label: user.name});
+        form.setFieldValue('psychologistId', { value: userId, label: user.name});
       } catch {
-        message.error("Erro ao carregar dados do psicólogo.");
+        message.error('Erro ao carregar dados do psicólogo.');
       }
-    }
-
-    loadData();
+    })();
   }, [form]);
 
-  const onFinish = async values => {
-    const sessionData = {
-      patientId:      values.patientId,
-      idUser:         values.psychologistId,
-      sessionDate:    values.sessionDate.format("YYYY-MM-DD"),
-      reason:         values.reason,
-      description:    values.description
-    };
+  const watchedPatient = Form.useWatch('patientId', form);
+  const currentPatientId = watchedPatient?.value ?? null;
 
+  const onFinish = async values => {
+    const payload = {
+      patientId:    values.patientId.value,
+      idUser:       values.psychologistId.value,
+      sessionDate:  values.sessionDate.format('YYYY-MM-DD'),
+      reason:       values.reason,
+      description:  values.description
+    };
     try {
-      await createSession(sessionData);
-      message.success("Sessão criada com sucesso!");
+      await createSession(payload);
+      message.success('Sessão criada com sucesso!');
       form.resetFields();
     } catch {
-      message.error("Erro ao criar sessão.");
+      message.error('Erro ao criar sessão.');
     }
   };
 
@@ -73,16 +82,22 @@ export default function SessionForm() {
       form={form}
       layout="vertical"
       onFinish={onFinish}
-      style={{ maxWidth: 600, margin: "0 auto" }}
+      style={{ maxWidth: 600, margin: '0 auto' }}
     >
       <Form.Item
         label="Paciente"
         name="patientId"
-        rules={[{ required: true, message: "Selecione o paciente!" }]}
+        rules={[{ required: true, message: 'Selecione o paciente!' }]}
       >
         <Select
+          showSearch
+          labelInValue
           placeholder="Selecione o paciente"
           options={patientsOptions}
+          optionFilterProp="label"
+          filterOption={(input, option) =>
+            option.label.toLowerCase().includes(input.toLowerCase())
+          }
         />
       </Form.Item>
 
@@ -90,9 +105,9 @@ export default function SessionForm() {
         label="Psicólogo"
         name="psychologistId"
         rules={[{ required: true }]}
-        initialValue={psychologistOption?.value}
       >
         <Select
+          labelInValue
           options={psychologistOption ? [psychologistOption] : []}
           disabled
         />
@@ -101,16 +116,16 @@ export default function SessionForm() {
       <Form.Item
         label="Data da Sessão"
         name="sessionDate"
-        rules={[{ required: true, message: "Selecione a data da sessão!" }]}
+        rules={[{ required: true, message: 'Selecione a data!' }]}
         initialValue={moment()}
       >
-        <DatePicker style={{ width: "100%" }} />
+        <DatePicker style={{ width: '100%' }} />
       </Form.Item>
 
       <Form.Item
         label="Motivo"
         name="reason"
-        rules={[{ required: true, message: "Informe o motivo da sessão!" }]}
+        rules={[{ required: true, message: 'Informe o motivo!' }]}
       >
         <Input.TextArea />
       </Form.Item>
@@ -119,8 +134,20 @@ export default function SessionForm() {
         <Input.TextArea />
       </Form.Item>
 
-      <Form.Item>
-        <Button type="primary" htmlType="submit" style={{ width: "100%" }}>
+      <Collapse style={{ marginTop: 24 }}>
+        <Panel header="Tratamentos" key="treatments">
+          <TreatmentManager patientId={currentPatientId} />
+        </Panel>
+      </Collapse>
+
+      <Collapse style={{ marginTop: 12 }}>
+        <Panel header="Acompanhamentos" key="followups">
+          <FollowupManager patientId={currentPatientId} />
+        </Panel>
+      </Collapse>
+
+      <Form.Item style={{ marginTop: 24 }}>
+        <Button type="primary" htmlType="submit" block>
           Criar Sessão
         </Button>
       </Form.Item>

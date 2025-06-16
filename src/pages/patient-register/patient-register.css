@@ -1,17 +1,8 @@
-
 .patient-register-container {
-    display: flex;
-    flex-direction: column;
-    width: 90%;
-    max-width: 1200px;
-    align-items: center;
-    justify-content: center;
     background: #fff;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
     border-radius: 10px;
-    margin-left: 250px; /* Isso vai empurrar o conteúdo para a direita, dando espaço para a sidebar */
     padding: 20px;
-    width: calc(95% - 250px); /* Ajusta o conteúdo para ocupar o espaço restante */
   }
   
   .patient-register-container h2 {

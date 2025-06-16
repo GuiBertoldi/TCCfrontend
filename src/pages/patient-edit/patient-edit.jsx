@@ -1,4 +1,3 @@
-// src/pages/patient-edit/patient-edit.jsx
 import React, { useEffect, useState } from "react";
 import { Form, Input, Button, Row, Col, message, Collapse } from "antd";
 import { useParams, useNavigate } from "react-router-dom";
@@ -104,7 +103,6 @@ export default function PatientEdit() {
           disabled={loading}
           initialValues={{ fatherAge: "", motherAge: "" }}
         >
-          {/* Campo oculto para idPatient */}
           <Form.Item name="idPatient" noStyle>
             <Input type="hidden" />
           </Form.Item>

@@ -1,33 +1,32 @@
 import React, { useEffect, useState } from "react";
 import { fetchPatientsByUserId } from "../../services/patient-service";
 import { Table, Input, Button } from "antd";
-import { EditOutlined, UnorderedListOutlined } from '@ant-design/icons';
+import { EditOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
 import "./patient-list.css";
 
-const PatientList = () => {
+export default function PatientList() {
   const navigate = useNavigate();
-  const [patients, setPatients]   = useState([]);
-  const [filtered, setFiltered]   = useState([]);
-  const [term, setTerm]           = useState("");
-  const [page, setPage]           = useState(1);
+  const [patients, setPatients] = useState([]);
+  const [filtered, setFiltered] = useState([]);
+  const [term, setTerm] = useState("");
 
   useEffect(() => {
-    fetchPatientsByUserId().then(data => {
+    fetchPatientsByUserId().then((data) => {
       setPatients(data);
       setFiltered(data);
     });
   }, []);
 
-  const onChange = e => {
+  const onChange = (e) => {
     const t = e.target.value.toLowerCase();
     setTerm(t);
-    setPage(1);
     setFiltered(
       t
-        ? patients.filter(p =>
-            p.name.toLowerCase().includes(t) ||
-            p.cpf.toLowerCase().includes(t)
+        ? patients.filter(
+            (p) =>
+              p.name.toLowerCase().includes(t) ||
+              p.cpf.toLowerCase().includes(t)
           )
         : patients
     );
@@ -35,27 +34,29 @@ const PatientList = () => {
 
   const columns = [
     { title: "Nome", dataIndex: "name", key: "name" },
-    { title: "CPF",  dataIndex: "cpf",  key: "cpf", width: 300 },
+    { title: "CPF", dataIndex: "cpf", key: "cpf" },
     {
       key: "edit",
-      render: (_, p) =>
+      width: 70,
+      render: (_, p) => (
         <Button
           type="text"
           icon={<EditOutlined />}
           onClick={() => navigate(`/patient-edit/${p.idUser}`)}
-        />,
-      width: 70
+        />
+      ),
     },
     {
       key: "list",
-      render: (_, p) =>
+      width: 70,
+      render: (_, p) => (
         <Button
           type="text"
           icon={<UnorderedListOutlined />}
           onClick={() => navigate(`/sessions-list/${p.idUser}`)}
-        />,
-      width: 70
-    }
+        />
+      ),
+    },
   ];
 
   return (
@@ -63,26 +64,23 @@ const PatientList = () => {
       <div className="patient-content">
         <h2>Pacientes</h2>
         <Input
+          className="search-input"
           placeholder="Buscar por nome ou CPF"
           value={term}
           onChange={onChange}
           allowClear
-          style={{ width: 300, margin: "16px 0" }}
         />
         <Table
+          className="patients-table"
           columns={columns}
           dataSource={filtered}
           rowKey="idUser"
           pagination={{
-            current: page,
             pageSize: 10,
-            onChange: p => setPage(p),
-            hideOnSinglePage: filtered.length <= 10
+            showSizeChanger: false,
           }}
         />
       </div>
     </div>
   );
-};
-
-export default PatientList;
+}

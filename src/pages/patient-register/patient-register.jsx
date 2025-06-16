@@ -1,4 +1,3 @@
-// src/pages/patient-register/patient-register.jsx
 import React, { useEffect } from "react";
 import { Form, Input, Button, Row, Col, message, Collapse } from "antd";
 import { useNavigate } from "react-router-dom";
@@ -66,7 +65,6 @@ export default function PatientRegister() {
           onFinish={onFinish}
           style={{ maxWidth: 800, margin: "0 auto" }}
         >
-          {/* Dados básicos */}
           <Row gutter={16}>
             <Col span={12}>
               <Form.Item label="Nome" name="name" rules={[{ required: true, message: "Informe o nome" }]}>
@@ -112,7 +110,6 @@ export default function PatientRegister() {
             </Col>
           </Row>
 
-          {/* Endereço */}
           <Row gutter={16}>
             <Col span={6}>
               <Form.Item label="CEP" name="cep" rules={[{ required: true, message: "Informe o CEP" }]}>
@@ -151,7 +148,6 @@ export default function PatientRegister() {
             </Col>
           </Row>
 
-          {/* Accordion Dados do Pai */}
           <Collapse>
             <Panel header="Dados do Pai" key="father">
               <Row gutter={16}>
@@ -187,7 +183,6 @@ export default function PatientRegister() {
             </Panel>
           </Collapse>
 
-          {/* Accordion Dados da Mãe */}
           <Collapse style={{ marginTop: 20 }}>
             <Panel header="Dados da Mãe" key="mother">
               <Row gutter={16}>

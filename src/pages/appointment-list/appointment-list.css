@@ -1,0 +1,26 @@
+.appointment-list-container {
+  padding: 24px;
+}
+
+.filter-card {
+  margin-bottom: 16px;
+}
+
+.filter-select,
+.filter-range {
+  width: 200px;
+}
+
+.filter-range {
+  width: auto;
+}
+
+.status-select {
+  width: 140px;
+}
+
+.appointment-form .form-date,
+.appointment-form .form-time,
+.appointment-form .form-duration {
+  width: 100%;
+}

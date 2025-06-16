@@ -1,5 +1,6 @@
 // src/pages/appointment-list/appointment-list.jsx
 import React, { useEffect, useState, useMemo } from 'react';
+import './appointment-list.css';
 import {
   Table,
   Button,
@@ -39,7 +40,7 @@ export default function AppointmentList() {
   const [filters, setFilters] = useState({
     idPsychologist: undefined,
     idPatient:      undefined,
-    dateRange:     [],      // [ 'YYYY-MM-DD', 'YYYY-MM-DD' ]
+    dateRange:     [],
     status:         undefined
   });
   const [appointments, setAppointments] = useState([]);
@@ -120,6 +121,8 @@ export default function AppointmentList() {
         status:   appt.status,
         notes:    appt.notes
       });
+    } else {
+      form.setFieldsValue({ duration: 60 });
     }
     setEditingAppt(appt || null);
     setModalVisible(true);
@@ -201,7 +204,7 @@ export default function AppointmentList() {
       render: (status, rec) => (
         <Select
           value={status}
-          style={{ width: 140 }}
+          className="status-select"
           onChange={v => handleStatusChange(rec.idAppointment, v, rec)}
           options={statusOptions}
         />
@@ -221,13 +224,13 @@ export default function AppointmentList() {
   ];
 
   return (
-    <div style={{ padding: 24 }}>
-      <Card style={{ marginBottom: 16 }}>
+    <div className="appointment-list-container">
+      <Card className="filter-card">
         <Space wrap size="middle">
           <Select
             showSearch
             placeholder="Pesquisar psicólogo"
-            style={{ width: 200 }}
+            className="filter-select"
             options={psychOptions}
             value={filters.idPsychologist}
             onChange={v => setFilters(f => ({ ...f, idPsychologist: v }))}
@@ -239,7 +242,7 @@ export default function AppointmentList() {
           <Select
             showSearch
             placeholder="Pesquisar paciente"
-            style={{ width: 200 }}
+            className="filter-select"
             options={patientOptions}
             value={filters.idPatient}
             onChange={v => setFilters(f => ({ ...f, idPatient: v }))}
@@ -249,6 +252,7 @@ export default function AppointmentList() {
             allowClear
           />
           <RangePicker
+            className="filter-range"
             placeholder={['Data início', 'Data fim']}
             value={
               filters.dateRange.length === 2
@@ -272,7 +276,7 @@ export default function AppointmentList() {
           />
           <Select
             placeholder="Status"
-            style={{ width: 160 }}
+            className="filter-select"
             options={statusOptions}
             value={filters.status}
             onChange={v => setFilters(f => ({ ...f, status: v }))}
@@ -283,6 +287,7 @@ export default function AppointmentList() {
       </Card>
 
       <Table
+        className="appointment-table"
         rowKey="idAppointment"
         loading={loading}
         columns={columns}
@@ -297,7 +302,7 @@ export default function AppointmentList() {
         footer={null}
         destroyOnClose
       >
-        <Form form={form} layout="vertical" onFinish={onFinish}>
+        <Form className="appointment-form" form={form} layout="vertical" onFinish={onFinish}>
           <Form.Item name="idPatient" label="Paciente" rules={[{ required: true }]}>
             <Select
               labelInValue
@@ -337,15 +342,15 @@ export default function AppointmentList() {
           </Form.Item>
 
           <Form.Item name="date" label="Data" rules={[{ required: true }]}>
-            <DatePicker style={{ width: '100%' }} />
+            <DatePicker className="form-date" />
           </Form.Item>
 
           <Form.Item name="time" label="Horário" rules={[{ required: true }]}>
-            <TimePicker format="HH:mm" minuteStep={15} style={{ width: '100%' }} />
+            <TimePicker className="form-time" format="HH:mm" minuteStep={15} />
           </Form.Item>
 
           <Form.Item name="duration" label="Duração (min)" rules={[{ required: true }]}>
-            <InputNumber min={1} style={{ width: '100%' }} />
+            <InputNumber className="form-duration" min={1} />
           </Form.Item>
 
           <Form.Item name="status" label="Status" rules={[{ required: true }]}>
