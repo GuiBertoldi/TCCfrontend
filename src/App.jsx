@@ -6,7 +6,6 @@ import Login from './pages/login/login';
 import PatientRegister from './pages/patient-register/patient-register';
 import PatientEdit from './pages/patient-edit/patient-edit';
 import PatientList from './pages/patient-list/patient-list';
-import PatientDetails from './pages/patient-details/patient-details';
 import ProtectedRoute from './components/protected-route';
 import SessionForm from './pages/sessions/session';
 import SessionEdit from './pages/sessions-edit/session-edit';
