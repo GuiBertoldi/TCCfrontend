@@ -37,7 +37,6 @@ function App() {
               <Route path="/patient-register" element={<div className="app-content"><PatientRegister /></div>} />
                 <Route path="/patient-edit/:idUser" element={<div className="app-content"><PatientEdit /></div>} />
                 <Route path="/patients" element={<div className="app-content"><PatientList /></div>} />
-                <Route path="/patient-details/:id" element={<div className="app-content"><PatientDetails /></div>} />
                 <Route path="/sessions" element={<div className="app-content"><SessionForm /></div>} />
                 <Route path="/session-edit/:idSession" element={<div className="app-content"><SessionEdit /></div>} />
                 <Route path="/sessions-list/:idUser" element={<div className="app-content"><SessionList /></div>} />
