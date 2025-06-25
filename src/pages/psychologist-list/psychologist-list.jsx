@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Table, Button, message } from "antd";
 import { useNavigate } from "react-router-dom";
 import { fetchPsychologists } from "../../services/psychologist-service";
+import Sidebar from "../../components/sidebar/sidebar";
 
 export default function PsychologistList() {
   const [list, setList] = useState([]);
@@ -43,6 +44,7 @@ export default function PsychologistList() {
 
   return (
     <div style={{ padding: 24 }}>
+      <Sidebar/>
       <h2>Selecione um Psicólogo</h2>
       <Table
         rowKey="idPsychologist"

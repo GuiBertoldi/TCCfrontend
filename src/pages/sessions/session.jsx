@@ -18,6 +18,7 @@ import {
 import { createSession } from '../../services/sessions-service';
 import TreatmentManager from '../../components/TreatmentManager/TreatmentManager';
 import FollowupManager  from '../../components/FollowupManager/FollowupManager';
+import Sidebar from "../../components/sidebar/sidebar";
 
 import './session.css';
 
@@ -78,6 +79,7 @@ export default function SessionForm() {
   };
 
   return (
+    <div><Sidebar/>
     <Form
       form={form}
       layout="vertical"
@@ -152,5 +154,6 @@ export default function SessionForm() {
         </Button>
       </Form.Item>
     </Form>
+    </div>
   );
 }

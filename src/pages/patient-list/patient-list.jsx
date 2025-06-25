@@ -3,6 +3,7 @@ import { fetchPatientsByUserId } from "../../services/patient-service";
 import { Table, Input, Button } from "antd";
 import { EditOutlined, UnorderedListOutlined } from "@ant-design/icons";
 import { useNavigate } from "react-router-dom";
+import Sidebar from "../../components/sidebar/sidebar";
 import "./patient-list.css";
 
 export default function PatientList() {
@@ -61,6 +62,7 @@ export default function PatientList() {
 
   return (
     <div className="patient-list-page">
+      <Sidebar/>
       <div className="patient-content">
         <h2>Pacientes</h2>
         <Input

@@ -16,6 +16,7 @@ import {
   Popconfirm,
   Card
 } from 'antd';
+import Sidebar from "../../components/sidebar/sidebar";
 import moment from 'moment';
 import {
   fetchAppointments,
@@ -225,6 +226,7 @@ export default function AppointmentList() {
 
   return (
     <div className="appointment-list-container">
+      <Sidebar/>
       <Card className="filter-card">
         <Space wrap size="middle">
           <Select

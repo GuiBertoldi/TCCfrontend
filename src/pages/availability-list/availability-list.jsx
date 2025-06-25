@@ -17,6 +17,7 @@ import {
   updateAvailability,
   deleteAvailability,
 } from "../../services/availability-service";
+import Sidebar from "../../components/sidebar/sidebar";
 
 const { Option } = Select;
 const diasSemana = [
@@ -148,6 +149,7 @@ export default function AvailabilityList() {
 
   return (
     <div style={{ padding: 24 }}>
+      <Sidebar/>
       <Button
         type="primary"
         onClick={() => openModal()}

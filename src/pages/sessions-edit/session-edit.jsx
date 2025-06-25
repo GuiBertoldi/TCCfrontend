@@ -5,6 +5,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { fetchSessionById, updateSession } from "../../services/sessions-service";
 import TreatmentManager from "../../components/TreatmentManager/TreatmentManager";
 import FollowupManager from "../../components/FollowupManager/FollowupManager";
+import Sidebar from "../../components/sidebar/sidebar";
 
 const { Panel } = Collapse;
 
@@ -54,6 +55,8 @@ export default function SessionEditForm() {
   };
 
   return (
+    <div>
+      <Sidebar/>
     <Form
       form={form}
       layout="vertical"
@@ -102,5 +105,6 @@ export default function SessionEditForm() {
         </Button>
       </Form.Item>
     </Form>
+    </div>
   );
 }

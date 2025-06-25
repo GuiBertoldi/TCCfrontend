@@ -5,6 +5,7 @@ import { useNavigate, useParams } from "react-router-dom";
 import { fetchSessionsByUserId } from "../../services/sessions-service";
 import moment from "moment";
 import "./session-list.css";
+import Sidebar from "../../components/sidebar/sidebar";
 
 const { RangePicker } = DatePicker;
 
@@ -86,6 +87,7 @@ export default function SessionList() {
 
   return (
     <div className="session-list-page">
+      <Sidebar/>
       <div className="session-content">
         <h2>Sessões do Paciente</h2>
         {error && <p className="error-message">{error}</p>}

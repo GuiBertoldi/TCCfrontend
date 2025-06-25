@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { Routes, Route } from 'react-router-dom';  // Removido BrowserRouter
 import './App.css';
 import Sidebar from './components/sidebar/sidebar';
 import Login from './pages/login/login';
@@ -13,38 +13,39 @@ import SessionList from './pages/sessions-list/session-list';
 import AppointmentList from './pages/appointment-list/appointment-list';
 import AvailabilityList from './pages/availability-list/availability-list';
 import PsychologistList from './pages/psychologist-list/psychologist-list';
-import ptBR from 'antd/es/locale/pt_BR';
 import { ConfigProvider } from 'antd';
 
 function App() {
   return (
-    <ConfigProvider locale={ptBR}>
-        <Routes>
-          <Route path="/login" element={<Login />} />
-          <Route path="/*" element={<Sidebar />}/>
-          <Route
-              index
-              element={
-                <div className="app-content">
-                  <h1>Bem-vindo ao Sistema</h1>
-                  <p>Esta é a página inicial. Use o menu acima para navegar.</p>
-                </div>
-              }
-            />
-        </Routes>
-            <Routes>
-            <ProtectedRoute>
-              <Route path="/patient-register" element={<div className="app-content"><PatientRegister /></div>} />
-                <Route path="/patient-edit/:idUser" element={<div className="app-content"><PatientEdit /></div>} />
-                <Route path="/patients" element={<div className="app-content"><PatientList /></div>} />
-                <Route path="/sessions" element={<div className="app-content"><SessionForm /></div>} />
-                <Route path="/session-edit/:idSession" element={<div className="app-content"><SessionEdit /></div>} />
-                <Route path="/sessions-list/:idUser" element={<div className="app-content"><SessionList /></div>} />
-                <Route path="/appointments" element={<div className="app-content"><AppointmentList /></div>} />
-                <Route path="/psychologists/:idPsychologist/availabilities"element={<div className="app-content"><AvailabilityList /></div>}/>
-                <Route path="/psychologists" element={<div className="app-content"><PsychologistList /></div>} />
-            </ProtectedRoute>
-            </Routes>
+    <ConfigProvider>
+      <Routes>
+        {/* Rotas públicas */}
+        <Route path="/login" element={<Login />} />
+        
+        <Route
+          index
+          element={
+            <div className="app-content">
+              <h1>Bem-vindo ao Sistema</h1>
+              <p>Esta é a página inicial. Use o menu acima para navegar.</p>
+            </div>
+          }
+        />
+
+        {/* Rotas protegidas */}
+        <Route >
+          <Route path="/*" element={<Sidebar />} />
+          <Route path="/patient-register" element={<div className="app-content"><PatientRegister /></div>} />
+          <Route path="/patient-edit/:idUser" element={<div className="app-content"><PatientEdit /></div>} />
+          <Route path="/patients" element={<div className="app-content"><PatientList /></div>} />
+          <Route path="/sessions" element={<div className="app-content"><SessionForm /></div>} />
+          <Route path="/session-edit/:idSession" element={<div className="app-content"><SessionEdit /></div>} />
+          <Route path="/sessions-list/:idUser" element={<div className="app-content"><SessionList /></div>} />
+          <Route path="/appointments" element={<div className="app-content"><AppointmentList /></div>} />
+          <Route path="/psychologists/:idPsychologist/availabilities" element={<div className="app-content"><AvailabilityList /></div>} />
+          <Route path="/psychologists" element={<div className="app-content"><PsychologistList /></div>} />
+        </Route>
+      </Routes>
     </ConfigProvider>
   );
 }

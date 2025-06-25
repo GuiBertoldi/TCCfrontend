@@ -56,7 +56,7 @@ export default function PatientRegister() {
 
   return (
     <div className="patient-register-container">
-      <Sidebar />
+      <Sidebar/>
       <div className="patient-register-content">
         <h2>Cadastro de Paciente</h2>
         <Form
