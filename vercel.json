@@ -1,0 +1,15 @@
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "package.json",
+      "use": "@vercel/node"
+    }
+  ],
+  "proxies": [
+    {
+      "source": "/auth/*",
+      "destination": "http://15.228.237.170:8080/auth/*"
+    }
+  ]
+}
