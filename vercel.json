@@ -6,10 +6,10 @@
       "use": "@vercel/node"
     }
   ],
-  "proxies": [
+  "rewrites": [
     {
-      "source": "/auth/*",
-      "destination": "http://15.228.237.170:8080/auth/*"
+      "source": "/auth/:path*",
+      "destination": "http://15.228.237.170:8080/auth/:path*"
     }
   ]
 }
