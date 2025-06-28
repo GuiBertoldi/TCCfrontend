@@ -5,7 +5,7 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 
 import { datadogRum } from '@datadog/browser-rum'
-import { reactPlugin } from '@datadog/browser-rum-react'
+import { RumProvider, ErrorBoundary, reactPlugin } from '@datadog/browser-rum-react'
 
 console.log('>>>> RUM VARS:', {
   APP_ID: process.env.REACT_APP_DD_RUM_APP_ID,
@@ -24,6 +24,8 @@ datadogRum.init({
   defaultPrivacyLevel:     'mask-user-input',
   plugins: [ reactPlugin({ router: true }) ]
 })
+
+window.datadogRum = datadogRum
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
