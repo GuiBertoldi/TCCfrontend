@@ -6,7 +6,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
-    "test:ci": "react-scripts test --coverage --watchAll=false --passWithNoTests",
+    "test:ci": "react-scripts test --coverage --coverageReporters=lcovonly --coverageDirectory=. --watchAll=false --passWithNoTests",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },
