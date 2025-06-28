@@ -27,7 +27,7 @@ function App() {
           element={
             <div className="app-content">
               <h1>Bem-vindo ao Sistema</h1>
-              <p>Esta é a página inicial. Use o menu acima para navegar.</p>
+              <p>Esta é a página inicial. Use o menu acima para navegar. teste</p>
             </div>
           }
         />
