@@ -2,27 +2,23 @@ name: React CI/CD Pipeline
 
 on:
   push:
-    branches: [ main ]
+    branches:
+      - main
 
 jobs:
   sonar:
     name: 🔍 SonarCloud Code Analysis
     runs-on: ubuntu-latest
-
     steps:
       - uses: actions/checkout@v3
-
       - name: Setup Node.js
         uses: actions/setup-node@v3
         with:
           node-version: '20.17.0'
-
       - name: Install dependencies
         run: npm install
-
       - name: Run Tests & Collect Coverage
         run: npm run test:ci
-
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
         env:
@@ -40,18 +36,15 @@ jobs:
     name: 🚀 Deploy to AWS Amplify
     needs: sonar
     runs-on: ubuntu-latest
-
     steps:
       - uses: aws-actions/configure-aws-credentials@v2
         with:
           aws-access-key-id:     ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           aws-region:            us-east-1
-
-      - name: Amplify Deploy
-        uses: aws-amplify/amplify-github-actions@v5
-        with:
-          amplify_app_id:  ${{ secrets.AMPLIFY_APP_ID }}
-          amplify_branch:  main
-          role_arn:        ${{ secrets.AMPLIFY_ROLE_ARN }}
-          skippull:        false
+      - name: Trigger Amplify Build
+        run: |
+          aws amplify start-job \
+            --app-id ${{ secrets.AMPLIFY_APP_ID }} \
+            --branch-name main \
+            --job-type RELEASE
