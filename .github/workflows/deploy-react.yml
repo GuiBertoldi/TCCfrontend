@@ -7,8 +7,9 @@ on:
 
 jobs:
   sonar:
-    name: SonarCloud Code Analysis
+    name: 🔍 SonarCloud Code Analysis
     runs-on: ubuntu-latest
+
     steps:
       - uses: actions/checkout@v3
       - name: Setup Node.js
@@ -17,15 +18,20 @@ jobs:
           node-version: '20.17.0'
       - name: Install dependencies
         run: npm install
-      - name: Run Tests
+      - name: Run Tests & Collect Coverage
         run: npm run test:ci
+
       - name: SonarCloud Scan
         uses: SonarSource/sonarcloud-github-action@v2
+        env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN_FRONT }}
         with:
-          sonar-project-key: ${{ secrets.SONAR_PROJECT_KEY }}
-          sonar-host-url: https://sonarcloud.io
-          sonar-login: ${{ secrets.SONAR_TOKEN_FRONT }}
-          extra-args: |
+          args: >
+            -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
+            -Dsonar.organization=SEU_ORG_NO_SONAR
+            -Dsonar.sources=src
+            -Dsonar.tests=src
+            -Dsonar.test.inclusions=**/*.test.{js,jsx,ts,tsx}
             -Dsonar.javascript.lcov.reportPaths=coverage/lcov.info
 
   deploy:
