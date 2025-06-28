@@ -1,11 +1,10 @@
-// src/index.jsx
-import { StrictMode } from 'react'
+import React from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 
 import { datadogRum } from '@datadog/browser-rum'
-import { reactPlugin } from '@datadog/browser-rum-react'
+import { RumProvider, ErrorBoundary, reactPlugin } from '@datadog/browser-rum-react'
 
 datadogRum.init({
   applicationId: process.env.REACT_APP_DD_RUM_APP_ID,
