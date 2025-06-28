@@ -2,10 +2,10 @@ import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import './index.css'
 import App from './App.jsx'
-import { BrowserRouter } from "react-router-dom"
+import { BrowserRouter } from 'react-router-dom'
 
 import { datadogRum } from '@datadog/browser-rum'
-import { RumProvider, reactRumErrorBoundary } from '@datadog/browser-rum-react'
+import { RumProvider, ErrorBoundary, reactPlugin } from '@datadog/browser-rum-react'
 
 datadogRum.init({
   applicationId: process.env.REACT_APP_DD_RUM_APP_ID,
@@ -17,18 +17,13 @@ datadogRum.init({
   sessionSampleRate:       100,
   sessionReplaySampleRate: 20,
   defaultPrivacyLevel:     'mask-user-input',
-  plugins: [reactRumErrorBoundary(), datadogRum.reactRouterPlugin(BrowserRouter)]
+  plugins: [ reactPlugin({ router: true }) ]
 })
 
-const container = document.getElementById('root')
-const root = createRoot(container)
-
-root.render(
+createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RumProvider>
-      <BrowserRouter>
-        <App />
-      </BrowserRouter>
-    </RumProvider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </StrictMode>
 )
