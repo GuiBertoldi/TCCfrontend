@@ -30,7 +30,7 @@ jobs:
         with:
           args: >
             -Dsonar.projectKey=${{ secrets.SONAR_PROJECT_KEY }}
-            -Dsonar.organization=<SUA_ORG_NO_SONARCLOUD>
+            -Dsonar.organization=${{ secrets.SONAR_ORGANIZATION }}
             -Dsonar.sources=src
             -Dsonar.tests=src
             -Dsonar.test.inclusions=**/*.test.{js,jsx,ts,tsx}
@@ -51,7 +51,7 @@ jobs:
       - name: Amplify Deploy
         uses: aws-amplify/amplify-github-actions@v5
         with:
-          amplify_app_id: ${{ secrets.AMPLIFY_APP_ID }}
-          amplify_branch: main
-          role_arn:       ${{ secrets.AMPLIFY_ROLE_ARN }}
-          skippull:       false
+          amplify_app_id:  ${{ secrets.AMPLIFY_APP_ID }}
+          amplify_branch:  main
+          role_arn:        ${{ secrets.AMPLIFY_ROLE_ARN }}
+          skippull:        false
