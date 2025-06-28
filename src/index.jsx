@@ -5,7 +5,12 @@ import App from './App.jsx'
 import { BrowserRouter } from 'react-router-dom'
 
 import { datadogRum } from '@datadog/browser-rum'
-import { RumProvider, ErrorBoundary, reactPlugin } from '@datadog/browser-rum-react'
+import { reactPlugin } from '@datadog/browser-rum-react'
+
+console.log('>>>> RUM VARS:', {
+  APP_ID: process.env.REACT_APP_DD_RUM_APP_ID,
+  TOKEN: process.env.REACT_APP_DD_RUM_CLIENT_TOKEN
+});
 
 datadogRum.init({
   applicationId: process.env.REACT_APP_DD_RUM_APP_ID,
