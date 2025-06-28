@@ -22,7 +22,11 @@ datadogRum.init({
   sessionSampleRate:       100,
   sessionReplaySampleRate: 20,
   defaultPrivacyLevel:     'mask-user-input',
-  plugins: [ reactPlugin({ router: true }) ]
+  plugins: [ reactPlugin({ router: true }) ],
+    intakeUrls: {
+    rum:           'https://rum-http-intake.logs.datadoghq.com/v1/input',
+    sessionReplay: 'https://session-replay-http-intake.logs.datadoghq.com/v1/input'
+  }
 })
 
 window.datadogRum = datadogRum
