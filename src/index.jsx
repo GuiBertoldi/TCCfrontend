@@ -7,7 +7,7 @@ import './index.css'
 import { BrowserRouter } from "react-router-dom";
 
 import { datadogRum } from '@datadog/browser-rum'
-import { RumProvider, ErrorBoundary, reactPlugin } from '@datadog/browser-rum-react'
+import { reactPlugin } from '@datadog/browser-rum-react'
 
 datadogRum.init({
   applicationId: process.env.REACT_APP_DD_RUM_APP_ID,
@@ -31,12 +31,8 @@ window.datadogRum = datadogRum
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <RumProvider>
-      <ErrorBoundary>
-        <BrowserRouter>
-          <App/>
-        </BrowserRouter>
-      </ErrorBoundary>
-    </RumProvider>
+    <BrowserRouter>
+      <App/>
+    </BrowserRouter>
   </StrictMode>
 )
