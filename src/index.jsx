@@ -31,8 +31,12 @@ window.datadogRum = datadogRum
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
-    <BrowserRouter>
-      <App />
-    </BrowserRouter>
+    <RumProvider>
+      <ErrorBoundary>
+        <BrowserRouter>
+          <App/>
+        </BrowserRouter>
+      </ErrorBoundary>
+    </RumProvider>
   </StrictMode>
 )
