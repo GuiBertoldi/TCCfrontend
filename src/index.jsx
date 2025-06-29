@@ -1,10 +1,13 @@
 import React from 'react'
+import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
 import App from './App.jsx'
-import { BrowserRouter } from 'react-router-dom'
 
-import { datadogRum } from '@datadog/browser-rum'
-import { RumProvider, ErrorBoundary, reactPlugin } from '@datadog/browser-rum-react'
+import './index.css'
+import { BrowserRouter } from "react-router-dom";
+
+import { datadogRum } from '@datadog/browser-rum';
+import { reactPlugin } from '@datadog/browser-rum-react';
 
 datadogRum.init({
   applicationId: process.env.REACT_APP_DD_RUM_APP_ID,
@@ -16,15 +19,8 @@ datadogRum.init({
   sessionSampleRate:       100,
   sessionReplaySampleRate: 20,
   defaultPrivacyLevel:     'mask-user-input',
-  plugins: [ reactPlugin({ router: true }) ],
-  debug: true,
-  intakeUrls: {
-    rum:           'https://rum-http-intake.logs.datadoghq.com/v1/input',
-    sessionReplay: 'https://session-replay-http-intake.logs.datadoghq.com/v1/input'
-  }
+  plugins: [reactPlugin({ router: true }) ],
 })
-
-window.datadogRum = datadogRum
 
 createRoot(document.getElementById('root')).render(
   <StrictMode>
