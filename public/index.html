@@ -10,7 +10,31 @@
       content="Web site created using create-react-app"
     />
     <link rel="apple-touch-icon" href="%PUBLIC_URL%/logo192.png" />
-	
+
+    <script>
+      ;(function(h,o,u,n,d) {
+        h=h[d]=h[d]||{q:[],onReady:function(c){h.q.push(c)}}
+        d=o.createElement(u);d.async=1;d.src=n
+        n=o.getElementsByTagName(u)[0];n.parentNode.insertBefore(d,n)
+      })(window,document,'script','https://www.datadoghq-browser-agent.com/datadog-rum.js','DD_RUM');
+    </script>
+    <script>
+      DD_RUM.onReady(function() {
+        DD_RUM.init({
+          applicationId: 'f20c650e-215f-409a-a04e-e1dd4df61a5c',
+          clientToken:   'pub6f5064bc00c9a6f8f7e365c00da4db6c',
+          site:          'datadoghq.com',
+          service:       'tcc-frontend',
+          env:           'production',
+          version:       '1.0.0',
+          sessionSampleRate:       100,
+          sessionReplaySampleRate: 20,
+          defaultPrivacyLevel:     'mask-user-input',
+          trackViewsManually:      false
+        });
+      });
+    </script>
+
     <title>React App</title>
   </head>
   <body>
