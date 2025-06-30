@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Table, Form, Row, Col, Collapse, DatePicker, Input, Button, message, Space, Popconfirm } from 'antd';
 import dayjs from 'dayjs';
 import {
@@ -163,3 +164,7 @@ export default function TreatmentManager({ patientId }) {
     </div>
   );
 }
+
+TreatmentManager.propTypes = {
+  patientId: PropTypes.number.isRequired
+};

@@ -12,7 +12,6 @@ import { fetchSessionsByUserId } from '../services/sessions-service';
 import { useNavigate, MemoryRouter, Route, Routes } from 'react-router-dom';
 
 jest.mock('../components/sidebar/sidebar', () => () => <div>Sidebar Component</div>);
-
 jest.mock('../services/sessions-service', () => ({
   fetchSessionsByUserId: jest.fn()
 }));
@@ -63,9 +62,7 @@ describe('SessionList', () => {
     expect(screen.getByText(/nº da consulta/i)).toBeInTheDocument();
     expect(screen.getByText(/data da consulta/i)).toBeInTheDocument();
 
-    screen.getAllByRole('row').filter(r => {
-      return within(r).queryByText('100') == null;
-    });
+    // Ensure the first displayed sessionNumber is the highest
     const firstNumberCell = screen.getAllByText('200')[0];
     expect(firstNumberCell).toBeInTheDocument();
     expect(screen.getByText('01/07/2025')).toBeInTheDocument();

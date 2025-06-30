@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { Input, Button } from "antd";
 import "./patient-search.css";
 
@@ -30,6 +31,10 @@ const PatientSearch = ({ onSearch }) => {
       </Button>
     </div>
   );
+};
+
+PatientSearch.propTypes = {
+  onSearch: PropTypes.func.isRequired
 };
 
 export default PatientSearch;

@@ -94,7 +94,7 @@ export default function AppointmentList() {
   }, []);
 
   const filteredAppointments = useMemo(() => {
-    const filtered = appointments
+    return appointments
       .filter(rec => !filters.idPsychologist || rec.psychologist.idPsychologist === filters.idPsychologist)
       .filter(rec => !filters.idPatient || rec.patient.idPatient === filters.idPatient)
       .filter(rec => {
@@ -103,10 +103,8 @@ export default function AppointmentList() {
         const d = moment(rec.date, 'YYYY-MM-DD');
         return d.isSameOrAfter(start, 'day') && d.isSameOrBefore(end, 'day');
       })
-      .filter(rec => !filters.status || rec.status === filters.status);
-      return filtered.sort((a, b) =>
-     moment(b.date, 'YYYY-MM-DD').diff(moment(a.date, 'YYYY-MM-DD'))
-   );
+      .filter(rec => !filters.status || rec.status === filters.status)
+      .sort((a, b) => moment(b.date, 'YYYY-MM-DD').diff(moment(a.date, 'YYYY-MM-DD')));
   }, [appointments, filters]);
 
   const openModal = appt => {
@@ -241,7 +239,7 @@ export default function AppointmentList() {
             onChange={v => setFilters(f => ({ ...f, idPatient: v }))}
             filterOption={(input, option) =>
               option.label.toLowerCase().includes(input.toLowerCase()) ||
-              (option.cpf && option.cpf.includes(input))
+              option.cpf?.includes(input)
             }
             allowClear
           />
