@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import PropTypes from 'prop-types';
 import { Table, Form, Collapse, Input, Button, message, Space, Popconfirm } from 'antd';
 import {
   fetchFollowupsByPatientId,
@@ -142,3 +143,7 @@ export default function FollowupManager({ patientId }) {
     </div>
   );
 }
+
+FollowupManager.propTypes = {
+  patientId: PropTypes.number
+};
