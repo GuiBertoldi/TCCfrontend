@@ -55,7 +55,7 @@ export default function PsychologistList() {
             navigate(`/psychologists/${rec.idPsychologist}/availabilities`)
           }
         >
-          Ver Disponibilidades
+          Ver Horários
         </Button>
       ),
       width: 200

@@ -69,7 +69,7 @@ describe('PsychologistList', () => {
     render(<PsychologistList />);
     const alphaRow = await screen.findByText('Dr. Alpha');
     const row = alphaRow.closest('tr');
-    const btn = within(row).getByRole('button', { name: /ver disponibilidades/i });
+    const btn = within(row).getByRole('button', { name: /ver Horários/i });
     fireEvent.click(btn);
     expect(navigate).toHaveBeenCalledWith('/psychologists/10/availabilities');
   });

@@ -87,10 +87,10 @@ export default function AvailabilityList() {
     try {
       if (modal.record) {
         await updateAvailability(+idPsychologist, modal.record.id, payload);
-        message.success('Disponibilidade atualizada');
+        message.success('Horário atualizado');
       } else {
         await createAvailability(+idPsychologist, payload);
-        message.success('Disponibilidade criada');
+        message.success('Horário criado');
       }
       closeModal();
       await refreshList();
@@ -102,7 +102,7 @@ export default function AvailabilityList() {
   const onDelete = useCallback(async rec => {
     try {
       await deleteAvailability(+idPsychologist, rec.id);
-      message.success('Disponibilidade removida');
+      message.success('Horário removido');
       await refreshList();
     } catch {
       message.error('Erro ao remover');
@@ -159,7 +159,9 @@ export default function AvailabilityList() {
   });
 
   const renderCell = cell => {
-    if (!cell) return '';
+    if (!cell) {
+      return null;
+    }
     if (editing.id === cell.id) {
       return (
         <div>
@@ -192,7 +194,12 @@ export default function AvailabilityList() {
         </div>
       );
     }
-    return `${dayjs(cell.startTime, 'HH:mm:ss').format('HH:mm')} - ${dayjs(cell.endTime, 'HH:mm:ss').format('HH:mm')}`;
+    return (
+      <span>
+        {dayjs(cell.startTime, 'HH:mm:ss').format('HH:mm')} –{' '}
+        {dayjs(cell.endTime,   'HH:mm:ss').format('HH:mm')}
+      </span>
+    );
   };
 
   const columns = diasSemana.map(d => ({
@@ -206,13 +213,13 @@ export default function AvailabilityList() {
   return (
     <div className="patient-content">
       <Sidebar />
-      <h2>Disponibilidades</h2>
+      <h2>Horário</h2>
       <Button
         type="primary"
         onClick={() => openModal(null)}
         style={{ marginBottom: 16 }}
       >
-        Nova Disponibilidade
+        Novo Horário
       </Button>
       <Table
         className="patients-table"
@@ -223,7 +230,7 @@ export default function AvailabilityList() {
         scroll={{ x: true }}
       />
       <Modal
-        title={modal.record ? 'Editar Disponibilidade' : 'Nova Disponibilidade'}
+        title={modal.record ? 'Editar Horário' : 'Novo Horário'}
         visible={modal.visible}
         onCancel={closeModal}
         footer={null}

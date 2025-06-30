@@ -63,7 +63,7 @@ describe('SessionList', () => {
     expect(screen.getByText(/nº da consulta/i)).toBeInTheDocument();
     expect(screen.getByText(/data da consulta/i)).toBeInTheDocument();
 
-    const rows = screen.getAllByRole('row').filter(r => {
+    screen.getAllByRole('row').filter(r => {
       return within(r).queryByText('100') == null;
     });
     const firstNumberCell = screen.getAllByText('200')[0];

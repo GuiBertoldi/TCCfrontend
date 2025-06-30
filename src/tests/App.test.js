@@ -9,7 +9,6 @@ jest.mock('../components/sidebar/sidebar', () => () => <div>Sidebar Component</d
 jest.mock('../pages/patient-register/patient-register', () => () => <div>Patient Register Page</div>);
 jest.mock('../pages/patient-edit/patient-edit', () => () => <div>Patient Edit Page</div>);
 jest.mock('../pages/patient-list/patient-list', () => () => <div>Patient List Page</div>);
-jest.mock('../components/protected-route', () => ({ children }) => <>{children}</>);
 jest.mock('../pages/sessions/session', () => () => <div>Session Form Page</div>);
 jest.mock('../pages/sessions-edit/session-edit', () => () => <div>Session Edit Page</div>);
 jest.mock('../pages/sessions-list/session-list', () => () => <div>Session List Page</div>);
@@ -17,29 +16,41 @@ jest.mock('../pages/appointment-list/appointment-list', () => () => <div>Appoint
 jest.mock('../pages/availability-list/availability-list', () => () => <div>Availability List Page</div>);
 jest.mock('../pages/psychologist-list/psychologist-list', () => () => <div>Psychologist List Page</div>);
 
+jest.mock('../components/protected-route', () => {
+  const React = require('react');
+  const PropTypes = require('prop-types');
+  const MockProtectedRoute = ({ children }) => <>{children}</>;
+  MockProtectedRoute.propTypes = {
+    children: PropTypes.node
+  };
+  return MockProtectedRoute;
+});
+
 describe('App Routing', () => {
-  test('should render Login page on /login route', () => {
+  test('renderiza Login em /login', () => {
     render(
-      <MemoryRouter initialEntries={["/login"]}>
+      <MemoryRouter initialEntries={['/login']}>
         <App />
       </MemoryRouter>
     );
     expect(screen.getByText('Login Page')).toBeInTheDocument();
   });
 
-  test('should render welcome content on root route', () => {
+  test('renderiza bem-vinda na raiz', () => {
     render(
-      <MemoryRouter initialEntries={["/"]}>
+      <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>
     );
     expect(screen.getByText('Bem-vindo ao Sistema')).toBeInTheDocument();
-    expect(screen.getByText('Esta é a página inicial. Use o menu acima para navegar.')).toBeInTheDocument();
+    expect(
+      screen.getByText('Esta é a página inicial. Use o menu acima para navegar.')
+    ).toBeInTheDocument();
   });
 
-  test('should render Sidebar for unknown routes', () => {
+  test('renderiza Sidebar em rota desconhecida', () => {
     render(
-      <MemoryRouter initialEntries={["/any-other-path"]}>
+      <MemoryRouter initialEntries={['/rota-inexistente']}>
         <App />
       </MemoryRouter>
     );

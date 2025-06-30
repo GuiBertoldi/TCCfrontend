@@ -43,21 +43,21 @@ describe('AvailabilityList', () => {
     await waitFor(() =>
       expect(fetchAvailabilitiesByPsychologistId).toHaveBeenCalledWith(123)
     );
-    expect(await screen.findByText('08:00 - 09:00')).toBeInTheDocument();
-    expect(await screen.findByText('10:00 - 11:00')).toBeInTheDocument();
+    expect(await screen.findByText(/08:00\s*[–-]\s*09:00/)).toBeInTheDocument();
+    expect(await screen.findByText(/10:00\s*[–-]\s*11:00/)).toBeInTheDocument();
   });
 
-  it('opens "Nova Disponibilidade" modal when clicking the button', async () => {
+  it('opens "Novo Horário" modal when clicking the button', async () => {
     render(<AvailabilityList />);
     await waitFor(() =>
       expect(fetchAvailabilitiesByPsychologistId).toHaveBeenCalled()
     );
-    const openButton = screen.getByRole('button', { name: /nova disponibilidade/i });
+
+    const openButton = screen.getByRole('button', { name: /novo horário/i });
     fireEvent.click(openButton);
 
     const dialog = screen.getByRole('dialog');
     expect(dialog).toBeInTheDocument();
-
-    expect(within(dialog).getByText('Nova Disponibilidade')).toBeInTheDocument();
+    expect(within(dialog).getByText(/novo horário/i)).toBeInTheDocument();
   });
 });
