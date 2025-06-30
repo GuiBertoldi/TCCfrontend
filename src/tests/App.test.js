@@ -4,7 +4,6 @@ import { MemoryRouter } from 'react-router-dom';
 import App from '../App';
 import '@testing-library/jest-dom';
 
-// Mock das páginas e componentes usados em App.js
 jest.mock('../pages/login/login', () => () => <div>Login Page</div>);
 jest.mock('../components/sidebar/sidebar', () => () => <div>Sidebar Component</div>);
 jest.mock('../pages/patient-register/patient-register', () => () => <div>Patient Register Page</div>);

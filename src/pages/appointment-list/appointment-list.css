@@ -1,9 +1,26 @@
-.appointment-list-container {
-  padding: 24px;
+.patient-content {
+  display: flex;
+  flex-direction: column;
+  width: 800px;
+  margin: 0 auto;
+  background: #fff;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  padding: 0 40px;
+  border-radius: 10px;
+  height: 555px;
+}
+
+.patient-content h2 {
+  margin: 24px 0 8px;
+  font-size: 1.5rem;
 }
 
 .filter-card {
-  margin-bottom: 16px;
+  margin-bottom: 8px;
+}
+
+.appointment-table {
+  margin-top: 8px;
 }
 
 .filter-select,

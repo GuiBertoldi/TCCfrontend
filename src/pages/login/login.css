@@ -7,7 +7,6 @@
     width: 100%;
     margin: 0;
     padding: 0;
-    box-sizing: border-box;
 }
 
   .login-form {
@@ -21,7 +20,7 @@
   .login-form h2 {
     margin-bottom: 20px;
     text-align: center;
-    color: #566B6B;
+    color: #1677ff;
   }
   
   .login-form-group {
@@ -34,10 +33,9 @@
   .login-form-group input {
     width: 70%;
     padding: 8px;
-    background-color: white;
-    color: #566B6B;
-    border: 1px solid #566B6B;
+    color: #1677ff;
     border-radius: 12px;
+    border: none;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
   }
   
@@ -45,11 +43,10 @@
     margin-top: 20px;
     margin-bottom: 20px;
     width: 75%;
-    background: linear-gradient(90deg, #589F8F 0%, #9DCDCD 100%);
+    background: linear-gradient(90deg, #1677ff 0%, #75aef3 100%);
     color: #FFFFFF;
     font-size: 16px;
     padding: 10px 20px;
-    border: none;
     border-radius: 25px;
     box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
     cursor: pointer;

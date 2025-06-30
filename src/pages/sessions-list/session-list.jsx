@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useMemo } from "react";
 import { Table, Button, Input, DatePicker, Row, Col } from "antd";
 import { EditOutlined } from "@ant-design/icons";
 import { useNavigate, useParams } from "react-router-dom";
@@ -12,116 +12,105 @@ const { RangePicker } = DatePicker;
 export default function SessionList() {
   const { idUser } = useParams();
   const navigate = useNavigate();
+
   const [sessionsData, setSessionsData] = useState([]);
-  const [filteredSessions, setFilteredSessions] = useState([]);
-  const [error, setError] = useState("");
   const [searchTerm, setSearchTerm] = useState("");
-  const [dateRange, setDateRange] = useState(null);
+  const [dateRange, setDateRange] = useState([null, null]);
+  const [error, setError] = useState("");
 
   useEffect(() => {
     if (!idUser) return;
     fetchSessionsByUserId(idUser)
       .then(data => {
         setSessionsData(data);
-        setFilteredSessions(data);
       })
-      .catch(() => setError("Erro ao carregar as sessões."));
+      .catch(() => {
+        setError("Erro ao carregar as sessões.");
+      });
   }, [idUser]);
 
-  const applyFilters = (term, range) => {
-    let filtered = [...sessionsData];
-
-    if (range && range.length === 2 && range[0] && range[1]) {
-      const [start, end] = range;
-      filtered = filtered.filter(session => {
-        const sessionDate = moment(session.sessionDate, "YYYY-MM-DD");
-        return sessionDate.isSameOrAfter(start, "day") && sessionDate.isSameOrBefore(end, "day");
+  const filteredSessions = useMemo(() => {
+    const filtered = sessionsData
+      .filter(session => {
+        const [start, end] = dateRange;
+        if (start && end) {
+          const date = session.sessionDate;
+          const from = start.format("YYYY-MM-DD");
+          const to   = end.format("YYYY-MM-DD");
+          return date >= from && date <= to;
+        }
+        return true;
+      })
+      .filter(session => {
+        if (!searchTerm) return true;
+        const name = session.idPsychologist?.idUser?.name?.toLowerCase() || "";
+        return name.includes(searchTerm.toLowerCase());
       });
-    }
 
-    if (term) {
-      const lowerTerm = term.toLowerCase();
-      filtered = filtered.filter(session => {
-        const psychologistName = session.idPsychologist?.idUser?.name?.toLowerCase() || "";
-        return psychologistName.includes(lowerTerm);
-      });
-    }
-
-    setFilteredSessions(filtered);
-  };
-
-  const onSearchChange = e => {
-    const val = e.target.value;
-    setSearchTerm(val);
-    applyFilters(val, dateRange);
-  };
-
-  const onDateRangeChange = dates => {
-    setDateRange(dates);
-    applyFilters(searchTerm, dates);
-  };
+    return filtered.sort((a, b) => b.sessionNumber - a.sessionNumber);
+  }, [sessionsData, searchTerm, dateRange]);
 
   const columns = [
-    { title: "Número da Consulta", dataIndex: "sessionNumber", key: "sessionNumber" },
-    { title: "Paciente", dataIndex: ["idPatient", "idUser", "name"], key: "PatientName" },
+    { title: "Nº da Consulta", dataIndex: "sessionNumber", key: "sessionNumber" },
+    { title: "Paciente", dataIndex: ["idPatient", "idUser", "name"], key: "patientName" },
     {
       title: "Data da Consulta",
       dataIndex: "sessionDate",
       key: "sessionDate",
-      render: (date) => date ? moment(date, "YYYY-MM-DD").format("DD/MM/YYYY") : ""
+      render: d => d ? moment(d).format("DD/MM/YYYY") : ""
     },
-    { title: "Psicólogo(a)", dataIndex: ["idPsychologist", "idUser", "name"], key: "psychologistName" },
     {
+      title: "Psicólogo(a)",
+      dataIndex: ["idPsychologist", "idUser", "name"],
+      key: "psychologistName"
+    },
+    {
+      title: "Editar",
       key: "edit",
-      render: (_, session) => (
+      width: 70,
+      render: (_, sess) => (
         <Button
           type="text"
-          className="button-edit"
-          onClick={() => navigate(`/session-edit/${session.idSession}`)}
           icon={<EditOutlined />}
+          onClick={() => navigate(`/session-edit/${sess.idSession}`)}
         />
-      ),
-      width: 70,
-    },
+      )
+    }
   ];
 
   return (
-    <div className="session-list-page">
-      <Sidebar/>
-      <div className="session-content">
-        <h2>Sessões do Paciente</h2>
-        {error && <p className="error-message">{error}</p>}
+    <div className="session-content">
+      <Sidebar />
+      <h2>Sessões do Paciente</h2>
+      {error && <p className="error-message">{error}</p>}
 
-        <Row gutter={16} style={{ marginBottom: 16 }}>
-          <Col xs={24} sm={12} md={8} lg={6}>
-            <Input
-              placeholder="Buscar por Psicólogo"
-              value={searchTerm}
-              onChange={onSearchChange}
-              allowClear
-            />
-          </Col>
-          <Col xs={24} sm={12} md={10} lg={8}>
-            <RangePicker
-              onChange={onDateRangeChange}
-              allowClear
-              style={{ width: "100%" }}
-              format="DD/MM/YYYY"
-              placeholder={["Data Início", "Data Fim"]}
-            />
-          </Col>
-        </Row>
+      <Row gutter={16} style={{ marginBottom: 16 }}>
+        <Col>
+          <Input
+            placeholder="Buscar por Psicólogo"
+            value={searchTerm}
+            onChange={e => setSearchTerm(e.target.value)}
+            allowClear
+          />
+        </Col>
+        <Col>
+          <RangePicker
+            value={dateRange}
+            onChange={dates => setDateRange(dates || [null, null])}
+            format="DD/MM/YYYY"
+            placeholder={["Data Início", "Data Fim"]}
+            allowClear
+          />
+        </Col>
+      </Row>
 
-        <Table
-          rootClassName="session-table"
-          columns={columns}
-          dataSource={filteredSessions}
-          rowKey="idSession"
-          pagination={{ hideOnSinglePage: true, defaultPageSize: 6 }}
-          style={{ width: "100%" }}
-          scroll={{ y: 450 }}
-        />
-      </div>
+      <Table
+        columns={columns}
+        dataSource={filteredSessions}
+        rowKey="idSession"
+        pagination={{ pageSize: 5, showSizeChanger: false }}
+        style={{ width: "100%" }}
+      />
     </div>
   );
 }

@@ -6,7 +6,7 @@
 body {
     margin: 0;
     font-family: Arial, sans-serif;
-    background-color: #d3d3d3;
+    background-color: #f3f3f3;
     text-align: center;
     justify-content: center;
   }
@@ -46,3 +46,10 @@ body {
 .read-the-docs {
   color: #888;
 }
+
+  
+  .ant-form {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+  }

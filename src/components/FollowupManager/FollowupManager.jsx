@@ -1,6 +1,6 @@
-// src/components/FollowupManager/FollowupManager.jsx
 import React, { useEffect, useState } from 'react';
-import { Table, Button, Modal, Form, Input, message, Popconfirm, Space } from 'antd';
+import { Table, Form, Collapse, Input, Button, message, Space, Popconfirm } from 'antd';
+import dayjs from 'dayjs';
 import {
   fetchFollowupsByPatientId,
   createFollowup,
@@ -8,85 +8,93 @@ import {
   deleteFollowup
 } from '../../services/followup-service';
 
+const { Panel } = Collapse;
+
 export default function FollowupManager({ patientId }) {
-  const [list, setList]       = useState([]);
+  const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
-  const [modal, setModal]     = useState({ open: false, record: null });
-  const [form]                = Form.useForm();
+  const [editing, setEditing] = useState(null);
+  const [activeKey, setActiveKey] = useState(null);
+  const [form] = Form.useForm();
 
   useEffect(() => {
     if (!patientId) return;
-    (async () => {
-      setLoading(true);
-      try {
-        const data = await fetchFollowupsByPatientId(patientId);
-        setList(Array.isArray(data) ? data : []);
-      } catch {
-        message.error('Erro ao carregar acompanhamentos');
-      } finally {
-        setLoading(false);
-      }
-    })();
+    loadList();
   }, [patientId]);
 
-  const open = rec => {
-    setModal({ open: true, record: rec });
-    if (rec) {
-      form.setFieldsValue({
-        professionalName:      rec.professionalName,
-        professionalSpecialty: rec.professionalSpecialty
-      });
-    } else {
-      form.resetFields();
-    }
-  };
-  const close = () => {
-    setModal({ open: false, record: null });
-    form.resetFields();
-  };
-
-  const onFinish = async values => {
-    const payload = {
-      patientId,
-      professionalName:      values.professionalName,
-      professionalSpecialty: values.professionalSpecialty
-    };
+  const loadList = async () => {
+    setLoading(true);
     try {
-      if (modal.record) {
-        await updateFollowup(modal.record.idFollowUp, payload);
-        message.success('Acompanhamento atualizado');
-      } else {
-        await createFollowup(payload);
-        message.success('Acompanhamento criado');
-      }
-      close();
       const data = await fetchFollowupsByPatientId(patientId);
       setList(Array.isArray(data) ? data : []);
     } catch {
-      message.error('Erro ao salvar acompanhamento');
+      message.error('Erro ao carregar acompanhamentos');
+    } finally {
+      setLoading(false);
     }
+  };
+
+  const onEdit = record => {
+    setEditing(record);
+    form.setFieldsValue({
+      professionalName: record.professionalName,
+      professionalSpecialty: record.professionalSpecialty
+    });
+    setActiveKey('form');
   };
 
   const onDelete = async id => {
     try {
       await deleteFollowup(id);
       message.success('Acompanhamento removido');
-      setList(list.filter(i => i.idFollowUp !== id));
+      loadList();
     } catch {
       message.error('Erro ao remover acompanhamento');
     }
   };
 
+  const onFinish = async values => {
+    if (!patientId) {
+      message.error('Selecione um paciente antes de adicionar acompanhamento');
+      return;
+    }
+    const payload = {
+      patientId,
+      professionalName: values.professionalName,
+      professionalSpecialty: values.professionalSpecialty
+    };
+    try {
+      if (editing) {
+        await updateFollowup(editing.idFollowUp, payload);
+        message.success('Acompanhamento atualizado');
+      } else {
+        await createFollowup(payload);
+        message.success('Acompanhamento criado');
+      }
+      setEditing(null);
+      form.resetFields();
+      setActiveKey(null);
+      loadList();
+    } catch {
+      message.error('Erro ao salvar acompanhamento');
+    }
+  };
+
   const columns = [
-    { title: 'Profissional',  dataIndex: 'professionalName' },
+    { title: 'Profissional', dataIndex: 'professionalName' },
     { title: 'Especialidade', dataIndex: 'professionalSpecialty' },
     {
       title: 'Ações',
       render: (_, rec) => (
         <Space>
-          <Button size="small" onClick={() => open(rec)}>Editar</Button>
-          <Popconfirm title="Remover?" onConfirm={() => onDelete(rec.idFollowUp)}>
-            <Button danger size="small">Deletar</Button>
+          <Button size="small" onClick={() => onEdit(rec)}>Editar</Button>
+          <Popconfirm
+            title="Remover este acompanhamento?"
+            onConfirm={() => onDelete(rec.idFollowUp)}
+            okText="Sim"
+            cancelText="Não"
+          >
+            <Button danger size="small">Excluir</Button>
           </Popconfirm>
         </Space>
       )
@@ -94,16 +102,35 @@ export default function FollowupManager({ patientId }) {
   ];
 
   return (
-    <>
-      <Button
-        type="dashed"
-        block
-        onClick={() => open(null)}
-        style={{ marginBottom: 8 }}
-        disabled={!patientId}
-      >
-        + Novo Acompanhamento
-      </Button>
+    <div>
+      <Collapse accordion activeKey={activeKey} onChange={setActiveKey}>
+        <Panel header={editing ? 'Editar Acompanhamento' : '+ Novo Acompanhamento'} key="form">
+          <Form form={form} layout="vertical" onFinish={onFinish}>
+            <Form.Item
+              name="professionalName"
+              label="Profissional"
+              rules={[{ required: true, message: 'Informe o nome do profissional' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item
+              name="professionalSpecialty"
+              label="Especialidade"
+              rules={[{ required: true, message: 'Informe a especialidade' }]}
+            >
+              <Input />
+            </Form.Item>
+            <Form.Item>
+              <Space style={{ display: 'flex', justifyContent: 'flex-end' }}>
+                <Button onClick={() => { setEditing(null); form.resetFields(); setActiveKey(null); }}>Cancelar</Button>
+                <Button type="primary" htmlType="submit">
+                  {editing ? 'Salvar' : 'Criar'}
+                </Button>
+              </Space>
+            </Form.Item>
+          </Form>
+        </Panel>
+      </Collapse>
 
       <Table
         rowKey="idFollowUp"
@@ -111,35 +138,8 @@ export default function FollowupManager({ patientId }) {
         columns={columns}
         dataSource={list}
         pagination={false}
+        locale={{ emptyText: 'Não há acompanhamentos' }}
       />
-
-      <Modal
-        title={modal.record ? 'Editar Acompanhamento' : 'Novo Acompanhamento'}
-        open={modal.open}
-        onCancel={close}
-        footer={null}
-        destroyOnClose
-      >
-        <Form form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item
-            name="professionalName"
-            label="Nome do Profissional"
-            rules={[{ required: true, message: 'Informe o nome!' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item
-            name="professionalSpecialty"
-            label="Especialidade"
-            rules={[{ required: true, message: 'Informe a especialidade!' }]}
-          >
-            <Input />
-          </Form.Item>
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block>Salvar</Button>
-          </Form.Item>
-        </Form>
-      </Modal>
-    </>
+    </div>
   );
 }

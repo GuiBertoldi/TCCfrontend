@@ -1,12 +1,11 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';  // Removido BrowserRouter
+import { Routes, Route } from 'react-router-dom';
 import './App.css';
 import Sidebar from './components/sidebar/sidebar';
 import Login from './pages/login/login';
 import PatientRegister from './pages/patient-register/patient-register';
 import PatientEdit from './pages/patient-edit/patient-edit';
 import PatientList from './pages/patient-list/patient-list';
-import ProtectedRoute from './components/protected-route';
 import SessionForm from './pages/sessions/session';
 import SessionEdit from './pages/sessions-edit/session-edit';
 import SessionList from './pages/sessions-list/session-list';
@@ -19,7 +18,6 @@ function App() {
   return (
     <ConfigProvider>
       <Routes>
-        {/* Rotas públicas */}
         <Route path="/login" element={<Login />} />
         
         <Route
@@ -32,7 +30,6 @@ function App() {
           }
         />
 
-        {/* Rotas protegidas */}
         <Route >
           <Route path="/*" element={<Sidebar />} />
           <Route path="/patient-register" element={<div className="app-content"><PatientRegister /></div>} />

@@ -1,4 +1,3 @@
-// src/pages/appointment-list/appointment-list.jsx
 import React, { useEffect, useState, useMemo } from 'react';
 import './appointment-list.css';
 import {
@@ -10,13 +9,14 @@ import {
   DatePicker,
   TimePicker,
   Input,
-  InputNumber,
   message,
   Space,
   Popconfirm,
-  Card
+  Card,
+  Row,
+  Col
 } from 'antd';
-import Sidebar from "../../components/sidebar/sidebar";
+import Sidebar from '../../components/sidebar/sidebar';
 import moment from 'moment';
 import {
   fetchAppointments,
@@ -31,25 +31,25 @@ const { Option } = Select;
 const { RangePicker } = DatePicker;
 
 const statusOptions = [
-  { label: 'Agendado',   value: 'SCHEDULED' },
+  { label: 'Agendado', value: 'SCHEDULED' },
   { label: 'Finalizado', value: 'COMPLETED' },
-  { label: 'Cancelado',  value: 'CANCELLED' },
+  { label: 'Cancelado', value: 'CANCELLED' },
   { label: 'Confirmado', value: 'CONFIRMED' }
 ];
 
 export default function AppointmentList() {
   const [filters, setFilters] = useState({
     idPsychologist: undefined,
-    idPatient:      undefined,
-    dateRange:     [],
-    status:         undefined
+    idPatient: undefined,
+    dateRange: [],
+    status: undefined
   });
   const [appointments, setAppointments] = useState([]);
-  const [loading, setLoading]         = useState(false);
+  const [loading, setLoading] = useState(false);
   const [modalVisible, setModalVisible] = useState(false);
-  const [editingAppt, setEditingAppt]   = useState(null);
+  const [editingAppt, setEditingAppt] = useState(null);
   const [form] = Form.useForm();
-  const [psychOptions,   setPsychOptions]   = useState([]);
+  const [psychOptions, setPsychOptions] = useState([]);
   const [patientOptions, setPatientOptions] = useState([]);
 
   useEffect(() => {
@@ -57,17 +57,22 @@ export default function AppointmentList() {
       try {
         const pysRes = await fetchPsychologists();
         const pysList = Array.isArray(pysRes) ? pysRes : pysRes.content || [];
-        setPsychOptions(pysList.map(p => ({
-          value: p.idPsychologist,
-          label: p.idUser.name
-        })));
+        setPsychOptions(
+          pysList.map(p => ({
+            value: p.idPsychologist,
+            label: p.idUser.name
+          }))
+        );
 
         const patsRes = await fetchPatients();
         const patsList = Array.isArray(patsRes) ? patsRes : patsRes.content || [];
-        setPatientOptions(patsList.map(p => ({
-          value: p.idPatient,
-          label: p.idUser.name
-        })));
+        setPatientOptions(
+          patsList.map(p => ({
+            value: p.idPatient,
+            label: p.idUser.name,
+            cpf: p.idUser.cpf
+          }))
+        );
       } catch {
         message.error('Erro ao carregar opções');
       }
@@ -89,43 +94,37 @@ export default function AppointmentList() {
   }, []);
 
   const filteredAppointments = useMemo(() => {
-    return appointments
-      .filter(rec => {
-        if (!filters.idPsychologist) return true;
-        return rec.psychologist.idPsychologist === filters.idPsychologist;
-      })
-      .filter(rec => {
-        if (!filters.idPatient) return true;
-        return rec.patient.idPatient === filters.idPatient;
-      })
+    const filtered = appointments
+      .filter(rec => !filters.idPsychologist || rec.psychologist.idPsychologist === filters.idPsychologist)
+      .filter(rec => !filters.idPatient || rec.patient.idPatient === filters.idPatient)
       .filter(rec => {
         const [start, end] = filters.dateRange;
         if (!start || !end) return true;
         const d = moment(rec.date, 'YYYY-MM-DD');
         return d.isSameOrAfter(start, 'day') && d.isSameOrBefore(end, 'day');
       })
-      .filter(rec => {
-        if (!filters.status) return true;
-        return rec.status === filters.status;
-      });
+      .filter(rec => !filters.status || rec.status === filters.status);
+      return filtered.sort((a, b) =>
+     moment(b.date, 'YYYY-MM-DD').diff(moment(a.date, 'YYYY-MM-DD'))
+   );
   }, [appointments, filters]);
 
   const openModal = appt => {
     form.resetFields();
     if (appt) {
       form.setFieldsValue({
-        idPatient:      { value: appt.patient.idPatient,     label: appt.patient.idUser.name },
+        idPatient: { value: appt.patient.idPatient, label: appt.patient.idUser.name },
         idPsychologist: { value: appt.psychologist.idPsychologist, label: appt.psychologist.idUser.name },
-        date:    moment(appt.date, 'YYYY-MM-DD'),
-        time:    moment(appt.time, 'HH:mm:ss'),
+        date: moment(appt.date, 'YYYY-MM-DD'),
+        time: moment(appt.time, 'HH:mm:ss'),
         duration: appt.duration,
-        status:   appt.status,
-        notes:    appt.notes
+        status: appt.status,
+        notes: appt.notes
       });
     } else {
       form.setFieldsValue({ duration: 60 });
     }
-    setEditingAppt(appt || null);
+    setEditingAppt(appt);
     setModalVisible(true);
   };
 
@@ -136,13 +135,13 @@ export default function AppointmentList() {
 
   const onFinish = async values => {
     const payload = {
-      idPatient:      values.idPatient.value,
+      idPatient: values.idPatient.value,
       idPsychologist: values.idPsychologist.value,
-      date:    values.date.format('YYYY-MM-DD'),
-      time:    values.time.format('HH:mm:ss'),
-      duration: values.duration,
-      status:   values.status,
-      notes:    values.notes
+      date: values.date.format('YYYY-MM-DD'),
+      time: values.time.format('HH:mm:ss'),
+      duration: 60,
+      status: values.status,
+      notes: values.notes
     };
     try {
       if (editingAppt) {
@@ -159,7 +158,7 @@ export default function AppointmentList() {
       setLoading(false);
       setFilters({ idPsychologist: undefined, idPatient: undefined, dateRange: [], status: undefined });
     } catch {
-      message.error('Erro ao salvar');
+      message.error('Esse horário está ocupado ou fora do expediente. Selecione outro horário.');
     }
   };
 
@@ -175,30 +174,33 @@ export default function AppointmentList() {
 
   const handleStatusChange = async (idAppointment, newStatus, rec) => {
     const payload = {
-      idPatient:      rec.patient.idPatient,
+      idPatient: rec.patient.idPatient,
       idPsychologist: rec.psychologist.idPsychologist,
-      date:    rec.date,
-      time:    rec.time,
+      date: rec.date,
+      time: rec.time,
       duration: rec.duration,
-      status:   newStatus,
-      notes:    rec.notes || ""
+      status: newStatus,
+      notes: rec.notes || ''
     };
     try {
       await updateAppointment(idAppointment, payload);
       message.success('Status atualizado');
-      setAppointments(appointments.map(a =>
-        a.idAppointment === idAppointment ? { ...a, status: newStatus } : a
-      ));
+      setAppointments(
+        appointments.map(a =>
+          a.idAppointment === idAppointment ? { ...a, status: newStatus } : a
+        )
+      );
     } catch {
       message.error('Erro ao atualizar status');
     }
   };
 
   const columns = [
-    { title: 'Paciente',  render: (_, rec) => rec.patient.idUser.name },
+    { title: 'Paciente', render: (_, rec) => rec.patient.idUser.name },
+    { title: 'CPF', render: (_, rec) => rec.patient.idUser.cpf },
     { title: 'Psicólogo', render: (_, rec) => rec.psychologist.idUser.name },
-    { title: 'Data',      dataIndex: 'date',   render: d => moment(d).format('YYYY-MM-DD') },
-    { title: 'Horário',   dataIndex: 'time' },
+    { title: 'Data', dataIndex: 'date', render: d => moment(d).format('DD/MM/YYYY') },
+    { title: 'Horário', dataIndex: 'time', render: t => moment(t, 'HH:mm:ss').format('HH:mm') },
     {
       title: 'Status',
       dataIndex: 'status',
@@ -225,10 +227,24 @@ export default function AppointmentList() {
   ];
 
   return (
-    <div className="appointment-list-container">
-      <Sidebar/>
+    <div className="patient-content">
+      <Sidebar />
+      <h2>Agendamentos</h2>
       <Card className="filter-card">
         <Space wrap size="middle">
+          <Select
+            showSearch
+            placeholder="Pesquisar paciente (nome ou CPF)"
+            className="filter-select"
+            options={patientOptions}
+            value={filters.idPatient}
+            onChange={v => setFilters(f => ({ ...f, idPatient: v }))}
+            filterOption={(input, option) =>
+              option.label.toLowerCase().includes(input.toLowerCase()) ||
+              (option.cpf && option.cpf.includes(input))
+            }
+            allowClear
+          />
           <Select
             showSearch
             placeholder="Pesquisar psicólogo"
@@ -236,18 +252,6 @@ export default function AppointmentList() {
             options={psychOptions}
             value={filters.idPsychologist}
             onChange={v => setFilters(f => ({ ...f, idPsychologist: v }))}
-            filterOption={(input, option) =>
-              option.label.toLowerCase().includes(input.toLowerCase())
-            }
-            allowClear
-          />
-          <Select
-            showSearch
-            placeholder="Pesquisar paciente"
-            className="filter-select"
-            options={patientOptions}
-            value={filters.idPatient}
-            onChange={v => setFilters(f => ({ ...f, idPatient: v }))}
             filterOption={(input, option) =>
               option.label.toLowerCase().includes(input.toLowerCase())
             }
@@ -287,16 +291,17 @@ export default function AppointmentList() {
           <Button type="primary" onClick={() => openModal(null)}>Novo</Button>
         </Space>
       </Card>
-
       <Table
         className="appointment-table"
         rowKey="idAppointment"
         loading={loading}
         columns={columns}
         dataSource={filteredAppointments}
-        pagination={false}
+        pagination={{
+          pageSize: 3,
+          showSizeChanger: false,
+        }}
       />
-
       <Modal
         title={editingAppt ? 'Editar Agendamento' : 'Novo Agendamento'}
         open={modalVisible}
@@ -304,74 +309,100 @@ export default function AppointmentList() {
         footer={null}
         destroyOnClose
       >
-        <Form className="appointment-form" form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item name="idPatient" label="Paciente" rules={[{ required: true }]}>
-            <Select
-              labelInValue
-              showSearch
-              placeholder="Pesquisar paciente"
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                option.children.toLowerCase().includes(input.toLowerCase())
-              }
-              disabled={!!editingAppt}
-            >
-              {patientOptions.map(opt => (
-                <Option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+        <Form form={form} layout="vertical" onFinish={onFinish}>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name="idPatient" label="Paciente" rules={[{ required: true }]}>
+                <Select
+                  labelInValue
+                  showSearch
+                  placeholder="Paciente"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().includes(input.toLowerCase())
+                  }
+                  disabled={!!editingAppt}
+                >
+                  {patientOptions.map(opt => (
+                    <Option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="idPsychologist" label="Psicólogo" rules={[{ required: true }]}>
+                <Select
+                  labelInValue
+                  showSearch
+                  placeholder="Psicólogo"
+                  optionFilterProp="children"
+                  filterOption={(input, option) =>
+                    option.children.toLowerCase().includes(input.toLowerCase())
+                  }
+                  disabled={!!editingAppt}
+                >
+                  {psychOptions.map(opt => (
+                    <Option key={opt.value} value={opt.value}>
+                      {opt.label}
+                    </Option>
+                  ))}
+                </Select>
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={16}>
+            <Col span={12}>
+              <Form.Item name="status" label="Status" rules={[{ required: true }]}>
+                <Select
+                  options={
+                    editingAppt
+                      ? statusOptions
+                      : statusOptions.filter(opt => opt.value !== 'CANCELLED' && opt.value !== 'COMPLETED')
+                  }
+                />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="notes" label="Observações">
+                <Input.TextArea rows={1} placeholder="Observações" />
+              </Form.Item>
+            </Col>
+          </Row>
 
-          <Form.Item name="idPsychologist" label="Psicólogo" rules={[{ required: true }]}>
-            <Select
-              labelInValue
-              showSearch
-              placeholder="Pesquisar psicólogo"
-              optionFilterProp="children"
-              filterOption={(input, option) =>
-                option.children.toLowerCase().includes(input.toLowerCase())
-              }
-              disabled={!!editingAppt}
-            >
-              {psychOptions.map(opt => (
-                <Option key={opt.value} value={opt.value}>
-                  {opt.label}
-                </Option>
-              ))}
-            </Select>
-          </Form.Item>
+          <Row gutter={12}>
+            <Col span={12}>
+              <Form.Item name="date" label="Data" rules={[{ required: true }]}>
+                <DatePicker className="form-date" placeholder="Selecione a Data" />
+              </Form.Item>
+            </Col>
+            <Col span={12}>
+              <Form.Item name="time" label="Horário" rules={[{ required: true }]}>
+                <TimePicker
+                  className="form-time"
+                  placeholder="Selecione o Horário"
+                  format="HH:mm"
+                  hourStep={1}
+                  minuteStep={60}
+                />
+              </Form.Item>
+            </Col>
+          </Row>
 
-          <Form.Item name="date" label="Data" rules={[{ required: true }]}>
-            <DatePicker className="form-date" />
-          </Form.Item>
 
-          <Form.Item name="time" label="Horário" rules={[{ required: true }]}>
-            <TimePicker className="form-time" format="HH:mm" minuteStep={15} />
-          </Form.Item>
-
-          <Form.Item name="duration" label="Duração (min)" rules={[{ required: true }]}>
-            <InputNumber className="form-duration" min={1} />
-          </Form.Item>
-
-          <Form.Item name="status" label="Status" rules={[{ required: true }]}>
-            <Select
-              options={editingAppt
-                ? statusOptions
-                : statusOptions.filter(opt => opt.value !== 'CANCELLED')}
-            />
-          </Form.Item>
-
-          <Form.Item name="notes" label="Observações">
-            <Input.TextArea rows={3} />
-          </Form.Item>
-
-          <Form.Item>
-            <Button type="primary" htmlType="submit" block>Salvar</Button>
-          </Form.Item>
+          <Row>
+            <Col span={24}>
+              <Form.Item>
+                <Button type="primary" htmlType="submit" block>
+                  Salvar
+                </Button>
+              </Form.Item>
+            </Col>
+          </Row>
         </Form>
       </Modal>
+
     </div>
   );
 }

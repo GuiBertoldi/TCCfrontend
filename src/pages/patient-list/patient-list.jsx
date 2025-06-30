@@ -34,11 +34,9 @@ export default function PatientList() {
   };
 
   const columns = [
-    { title: "Nome", dataIndex: "name", key: "name" },
-    { title: "CPF", dataIndex: "cpf", key: "cpf" },
-    {
-      key: "edit",
-      width: 70,
+    { title: "Nome", dataIndex: "name", key: "name", width: 300},
+    { title: "CPF", dataIndex: "cpf", key: "cpf",  width: 300},
+    { title: "Editar", key: "edit", width:100,
       render: (_, p) => (
         <Button
           type="text"
@@ -47,9 +45,7 @@ export default function PatientList() {
         />
       ),
     },
-    {
-      key: "list",
-      width: 70,
+    { title: "Sessões", key: "list", width:100,
       render: (_, p) => (
         <Button
           type="text"
@@ -61,12 +57,11 @@ export default function PatientList() {
   ];
 
   return (
-    <div className="patient-list-page">
-      <Sidebar/>
       <div className="patient-content">
+        <Sidebar/>
         <h2>Pacientes</h2>
         <Input
-          className="search-input"
+          className="search-input-patient"
           placeholder="Buscar por nome ou CPF"
           value={term}
           onChange={onChange}
@@ -78,11 +73,10 @@ export default function PatientList() {
           dataSource={filtered}
           rowKey="idUser"
           pagination={{
-            pageSize: 10,
+            pageSize: 5,
             showSizeChanger: false,
           }}
         />
       </div>
-    </div>
   );
 }

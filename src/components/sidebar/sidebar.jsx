@@ -13,23 +13,25 @@ const Sidebar = () => {
   return (
     <div className="sidebar">
       <h1>Menu</h1>
-      <ul>
-        <li>
-          <Link to="/patient-register">Cadastro de Paciente</Link>
-        </li>
-        <li>
-          <Link to="/patients">Lista de Pacientes</Link>
-        </li>
-        <li>
-          <Link to="/sessions">Sessões</Link>
-        </li>
-        <li>
-          <Link to="/appointments">Agendamentos</Link>
-        </li>
-        <li>
-          <Link to="/psychologists">Disponibilidades</Link>
-        </li>
-      </ul>
+      <div className="links">
+        <ul>
+          <li>
+            <Link to="/patient-register">Cadastro de Paciente</Link>
+          </li>
+          <li>
+            <Link to="/patients">Lista de Pacientes</Link>
+          </li>
+          <li>
+            <Link to="/sessions">Nova Sessão</Link>
+          </li>
+          <li>
+            <Link to="/appointments">Agendamentos</Link>
+          </li>
+          <li>
+            <Link to="/psychologists">Gestão de Horários</Link>
+          </li>
+        </ul>
+      </div>
       <button className="logout-button" onClick={handleLogout}>
         Sair
       </button>

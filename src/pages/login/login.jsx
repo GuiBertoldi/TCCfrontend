@@ -18,7 +18,7 @@ function Login() {
     setError('')
     try {
       await login({ email, password })
-      navigate('/patient-register')
+      navigate('/patients')
     } catch {
       setError('Login ou Senha inválido.')
     }

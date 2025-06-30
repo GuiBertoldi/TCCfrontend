@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 import {
   Table,
   Button,
@@ -7,27 +7,32 @@ import {
   Select,
   TimePicker,
   message,
-  Popconfirm,
-} from "antd";
-import dayjs from "dayjs";
-import { useParams } from "react-router-dom";
+  Popconfirm
+} from 'antd';
+import {
+  CheckOutlined,
+  CloseOutlined,
+  EditOutlined,
+  DeleteOutlined
+} from '@ant-design/icons';
+import dayjs from 'dayjs';
+import { useParams } from 'react-router-dom';
 import {
   fetchAvailabilitiesByPsychologistId,
   createAvailability,
   updateAvailability,
-  deleteAvailability,
-} from "../../services/availability-service";
-import Sidebar from "../../components/sidebar/sidebar";
+  deleteAvailability
+} from '../../services/availability-service';
+import Sidebar from '../../components/sidebar/sidebar';
 
-const { Option } = Select;
 const diasSemana = [
-  { label: "Segunda-feira", value: "MONDAY" },
-  { label: "Terça-feira",  value: "TUESDAY" },
-  { label: "Quarta-feira", value: "WEDNESDAY" },
-  { label: "Quinta-feira", value: "THURSDAY" },
-  { label: "Sexta-feira",  value: "FRIDAY" },
-  { label: "Sábado",       value: "SATURDAY" },
-  { label: "Domingo",      value: "SUNDAY" },
+  { label: 'Segunda-feira', value: 'MONDAY' },
+  { label: 'Terça-feira',   value: 'TUESDAY' },
+  { label: 'Quarta-feira',  value: 'WEDNESDAY' },
+  { label: 'Quinta-feira',  value: 'THURSDAY' },
+  { label: 'Sexta-feira',   value: 'FRIDAY' },
+  { label: 'Sábado',        value: 'SATURDAY' },
+  { label: 'Domingo',       value: 'SUNDAY' }
 ];
 
 export default function AvailabilityList() {
@@ -35,6 +40,7 @@ export default function AvailabilityList() {
   const [list, setList] = useState([]);
   const [loading, setLoading] = useState(false);
   const [modal, setModal] = useState({ visible: false, record: null });
+  const [editing, setEditing] = useState({ id: null, start: null, end: null });
   const [form] = Form.useForm();
 
   useEffect(() => {
@@ -42,25 +48,21 @@ export default function AvailabilityList() {
     (async () => {
       setLoading(true);
       try {
-        const data = await fetchAvailabilitiesByPsychologistId(
-          Number(idPsychologist)
-        );
-        setList(data);
-      } catch {
-        message.error("Erro ao carregar disponibilidades");
+        const data = await fetchAvailabilitiesByPsychologistId(+idPsychologist);
+        setList(data || []);
       } finally {
         setLoading(false);
       }
     })();
   }, [idPsychologist]);
 
-  const openModal = (rec = null) => {
+  const openModal = rec => {
     setModal({ visible: true, record: rec });
     if (rec) {
       form.setFieldsValue({
         dayOfWeek: rec.dayOfWeek,
-        startTime: dayjs(rec.startTime, "HH:mm:ss"),
-        endTime:   dayjs(rec.endTime,   "HH:mm:ss"),
+        startTime: dayjs(rec.startTime, 'HH:mm:ss'),
+        endTime:   dayjs(rec.endTime,   'HH:mm:ss')
       });
     } else {
       form.resetFields();
@@ -71,137 +73,160 @@ export default function AvailabilityList() {
     setModal({ visible: false, record: null });
     form.resetFields();
   };
-  
-  const onFinish = async (values) => {
+
+  const onFinish = async values => {
     const payload = {
       dayOfWeek: values.dayOfWeek,
-      startTime: values.startTime.format("HH:mm:ss"),
-      endTime:   values.endTime.format("HH:mm:ss"),
+      startTime: values.startTime.format('HH:mm:ss'),
+      endTime:   values.endTime.format('HH:mm:ss')
     };
     try {
       if (modal.record) {
-        await updateAvailability(
-          Number(idPsychologist),
-          modal.record.id,
-          payload
-        );
-        message.success("Disponibilidade atualizada");
+        await updateAvailability(+idPsychologist, modal.record.id, payload);
+        message.success('Disponibilidade atualizada');
       } else {
-        await createAvailability(Number(idPsychologist), payload);
-        message.success("Disponibilidade criada");
+        await createAvailability(+idPsychologist, payload);
+        message.success('Disponibilidade criada');
       }
       closeModal();
-      const data = await fetchAvailabilitiesByPsychologistId(
-        Number(idPsychologist)
-      );
-      setList(data);
+      const data = await fetchAvailabilitiesByPsychologistId(+idPsychologist);
+      setList(data || []);
     } catch {
-      message.error("Erro ao salvar");
+      message.error('Erro ao salvar');
     }
   };
 
-  const onDelete = async (id) => {
+  const onDelete = async rec => {
     try {
-      await deleteAvailability(Number(idPsychologist), id);
-      message.success("Removido");
-      const data = await fetchAvailabilitiesByPsychologistId(
-        Number(idPsychologist)
-      );
-      setList(data);
+      await deleteAvailability(+idPsychologist, rec.id);
+      message.success('Disponibilidade removida');
+      const data = await fetchAvailabilitiesByPsychologistId(+idPsychologist);
+      setList(data || []);
     } catch {
-      message.error("Erro ao remover");
+      message.error('Erro ao remover');
     }
   };
 
-  const columns = [
-    {
-      title: "Dia",
-      dataIndex: "dayOfWeek",
-      render: d => diasSemana.find(x => x.value === d)?.label,
-    },
-    { title: "Início", dataIndex: "startTime" },
-    { title: "Fim",    dataIndex: "endTime"   },
-    {
-      title: "Ações",
-      render: (_, rec) => (
-        <>
-          <Button
-            size="small"
-            onClick={() => openModal(rec)}
-            style={{ marginRight: 8 }}
-          >
-            Editar
-          </Button>
-          <Popconfirm
-            title="Remover?"
-            onConfirm={() => onDelete(rec.id)}
-            okText="Sim"
-            cancelText="Não"
-          >
-            <Button danger size="small">
-              Remover
-            </Button>
-          </Popconfirm>
-        </>
-      ),
-    },
-  ];
+  const saveInline = async () => {
+    const { id, start, end } = editing;
+    try {
+      const rec = list.find(r => r.id === id);
+      await updateAvailability(+idPsychologist, id, {
+        dayOfWeek: rec.dayOfWeek,
+        startTime: start.format('HH:mm:ss'),
+        endTime:   end.format('HH:mm:ss')
+      });
+      message.success('Horário atualizado');
+      setEditing({ id: null, start: null, end: null });
+      const data = await fetchAvailabilitiesByPsychologistId(+idPsychologist);
+      setList(data || []);
+    } catch {
+      message.error('Erro ao atualizar');
+    }
+  };
+
+  const cancelInline = () => {
+    setEditing({ id: null, start: null, end: null });
+  };
+
+  const grouped = diasSemana.reduce((acc, d) => {
+    acc[d.value] = list.filter(r => r.dayOfWeek === d.value);
+    return acc;
+  }, {});
+
+  const maxRows = Math.max(...Object.values(grouped).map(arr => arr.length));
+
+  const dataSource = Array.from({ length: maxRows }, (_, i) => {
+    const row = { key: i };
+    diasSemana.forEach(d => {
+      row[d.value] = grouped[d.value][i] || null;
+    });
+    return row;
+  });
+
+  const columns = diasSemana.map(d => ({
+    title: d.label,
+    dataIndex: d.value,
+    key: d.value,
+    onCell: record => ({
+      onDoubleClick: () => {
+        const cell = record[d.value];
+        if (cell) {
+          setEditing({
+            id:    cell.id,
+            start: dayjs(cell.startTime, 'HH:mm:ss'),
+            end:   dayjs(cell.endTime,   'HH:mm:ss')
+          });
+        }
+      }
+    }),
+    render: cell => {
+      if (!cell) return '';
+      if (editing.id === cell.id) {
+        return (
+          <div>
+            <div style={{ display: 'flex', gap: 8 }}>
+              <TimePicker
+                value={editing.start}
+                format="HH:mm"
+                minuteStep={15}
+                onChange={v => setEditing(e => ({ ...e, start: v }))}
+              />
+              <TimePicker
+                value={editing.end}
+                format="HH:mm"
+                minuteStep={15}
+                onChange={v => setEditing(e => ({ ...e, end: v }))}
+              />
+            </div>
+            <div style={{ marginTop: 8, display: 'flex', gap: 8 }}>
+              <Button icon={<CheckOutlined />} size="small" onClick={saveInline} />
+              <Button icon={<CloseOutlined />} size="small" onClick={cancelInline} />
+              <Popconfirm title="Remover?" onConfirm={() => onDelete(cell)} okText="Sim" cancelText="Não">
+                <Button icon={<DeleteOutlined />} size="small" danger />
+              </Popconfirm>
+            </div>
+          </div>
+        );
+      }
+      return `${dayjs(cell.startTime, 'HH:mm:ss').format('HH:mm')} - ${dayjs(cell.endTime, 'HH:mm:ss').format('HH:mm')}`;
+    }
+  }));
 
   return (
-    <div style={{ padding: 24 }}>
-      <Sidebar/>
-      <Button
-        type="primary"
-        onClick={() => openModal()}
-        style={{ marginBottom: 16 }}
-      >
+    <div className="patient-content">
+      <Sidebar />
+      <h2>Disponibilidades</h2>
+      <Button type="primary" onClick={() => openModal(null)} style={{ marginBottom: 16 }}>
         Nova Disponibilidade
       </Button>
-
       <Table
-        rowKey="id"
+        className="patients-table"
         loading={loading}
         columns={columns}
-        dataSource={list}
+        dataSource={dataSource}
         pagination={false}
+        scroll={{ x: true }}
       />
-
       <Modal
-        title={modal.record ? "Editar Disponibilidade" : "Nova Disponibilidade"}
+        title={modal.record ? 'Editar Disponibilidade' : 'Nova Disponibilidade'}
         visible={modal.visible}
         onCancel={closeModal}
         footer={null}
         destroyOnClose
       >
         <Form form={form} layout="vertical" onFinish={onFinish}>
-          <Form.Item
-            name="dayOfWeek"
-            label="Dia da Semana"
-            rules={[{ required: true, message: "Selecione um dia!" }]}
-          >
+          <Form.Item name="dayOfWeek" label="Dia da Semana" rules={[{ required: true }]}>
             <Select options={diasSemana} />
           </Form.Item>
-
-          <Form.Item
-            name="startTime"
-            label="Hora Início"
-            rules={[{ required: true, message: "Informe a hora!" }]}
-          >
-            <TimePicker format="HH:mm" minuteStep={15} style={{ width: "100%" }} />
+          <Form.Item name="startTime" label="Hora Início" rules={[{ required: true }]}>
+            <TimePicker format="HH:mm" minuteStep={15} style={{ width: '100%' }} />
           </Form.Item>
-
-          <Form.Item
-            name="endTime"
-            label="Hora Fim"
-            rules={[{ required: true, message: "Informe a hora!" }]}
-          >
-            <TimePicker format="HH:mm" minuteStep={15} style={{ width: "100%" }} />
+          <Form.Item name="endTime" label="Hora Fim" rules={[{ required: true }]}>
+            <TimePicker format="HH:mm" minuteStep={15} style={{ width: '100%' }} />
           </Form.Item>
-
           <Form.Item>
-            <Button type="primary" htmlType="submit" block>
-              Salvar
-            </Button>
+            <Button type="primary" htmlType="submit" block>Salvar</Button>
           </Form.Item>
         </Form>
       </Modal>
