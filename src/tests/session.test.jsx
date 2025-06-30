@@ -10,7 +10,7 @@ jest.mock('../axiosConfig.jsx', () => ({ get: jest.fn(), post: jest.fn() }));
 jest.mock('jwt-decode', () => ({ jwtDecode: jest.fn() }));
 
 import React from 'react';
-import { render, screen, waitFor, fireEvent, within } from '@testing-library/react';
+import { render, screen, waitFor, fireEvent } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { MemoryRouter } from 'react-router-dom';
 import SessionForm from '../pages/sessions/session';

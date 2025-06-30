@@ -17,7 +17,7 @@ jest.mock('../pages/availability-list/availability-list', () => () => <div>Avail
 jest.mock('../pages/psychologist-list/psychologist-list', () => () => <div>Psychologist List Page</div>);
 
 jest.mock('../components/protected-route', () => {
-  const React = require('react');
+  require('react');
   const PropTypes = require('prop-types');
   const MockProtectedRoute = ({ children }) => <>{children}</>;
   MockProtectedRoute.propTypes = {
