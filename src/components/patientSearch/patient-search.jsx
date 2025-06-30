@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import { Input, Button } from "antd";
-import { useNavigate } from "react-router-dom";
 import "./patient-search.css";
 
 const PatientSearch = ({ onSearch }) => {

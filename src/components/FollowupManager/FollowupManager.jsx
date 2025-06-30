@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
 import { Table, Form, Collapse, Input, Button, message, Space, Popconfirm } from 'antd';
-import dayjs from 'dayjs';
 import {
   fetchFollowupsByPatientId,
   createFollowup,

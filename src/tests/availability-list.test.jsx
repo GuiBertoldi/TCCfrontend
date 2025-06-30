@@ -17,10 +17,7 @@ import { render, screen, waitFor, fireEvent, within } from '@testing-library/rea
 import AvailabilityList from '../pages/availability-list/availability-list';
 import '@testing-library/jest-dom';
 import {
-  fetchAvailabilitiesByPsychologistId,
-  createAvailability,
-  updateAvailability,
-  deleteAvailability
+  fetchAvailabilitiesByPsychologistId
 } from '../services/availability-service';
 
 jest.mock('../components/sidebar/sidebar', () => () => <div>Sidebar Component</div>);

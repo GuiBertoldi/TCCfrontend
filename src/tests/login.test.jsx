@@ -38,7 +38,7 @@ describe('Login Component', () => {
   });
 
   it('calls login and navigates on successful submit', async () => {
-    login.mockResolvedValue();  // simula login bem-sucedido
+    login.mockResolvedValue();
 
     render(<Login />);
     fireEvent.change(screen.getByPlaceholderText('E-mail'), {
