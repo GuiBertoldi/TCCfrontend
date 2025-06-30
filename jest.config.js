@@ -1,16 +1,16 @@
 module.exports = {
   transform: {
-    "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",  // Usa babel-jest para transformar os arquivos JS e JSX
+    "^.+\\.(js|jsx|ts|tsx)$": "babel-jest",
   },
   transformIgnorePatterns: [
-    "/node_modules/(?!antd|rc-pagination|react-router-dom)/",  // Transforma 'antd', 'rc-pagination' e 'react-router-dom'
+    "/node_modules/(?!antd|rc-pagination|react-router-dom)/",
   ],
-  testEnvironment: "jsdom",  // Ambiente de testes para emular o navegador
+  testEnvironment: "jsdom",
   moduleNameMapper: {
-    '\\.(css|less)$': 'identity-obj-proxy',  // Para evitar erros com CSS
+    '\\.(css|less)$': 'identity-obj-proxy',
   },
   setupFilesAfterEnv: [
-    "@testing-library/jest-dom/extend-expect",  // Para usar matchers do jest-dom como 'toBeInTheDocument'
+    "@testing-library/jest-dom/extend-expect",
   ],
   moduleDirectories: [
     "node_modules",

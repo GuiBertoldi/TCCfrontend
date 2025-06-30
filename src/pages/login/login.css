@@ -31,6 +31,7 @@
   }
   
   .login-form-group input {
+    background: #FFFFFF;
     width: 70%;
     padding: 8px;
     color: #1677ff;
