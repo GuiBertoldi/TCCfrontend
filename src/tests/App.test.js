@@ -17,12 +17,10 @@ jest.mock('../pages/availability-list/availability-list', () => () => <div>Avail
 jest.mock('../pages/psychologist-list/psychologist-list', () => () => <div>Psychologist List Page</div>);
 
 jest.mock('../components/protected-route', () => {
-  require('react');
+  const React = require('react');
   const PropTypes = require('prop-types');
   const MockProtectedRoute = ({ children }) => <>{children}</>;
-  MockProtectedRoute.propTypes = {
-    children: PropTypes.node
-  };
+  MockProtectedRoute.propTypes = { children: PropTypes.node };
   return MockProtectedRoute;
 });
 
@@ -36,16 +34,14 @@ describe('App Routing', () => {
     expect(screen.getByText('Login Page')).toBeInTheDocument();
   });
 
-  test('renderiza bem-vinda na raiz', () => {
+  test('redireciona de / para /login', () => {
     render(
       <MemoryRouter initialEntries={['/']}>
         <App />
       </MemoryRouter>
     );
-    expect(screen.getByText('Bem-vindo ao Sistema')).toBeInTheDocument();
-    expect(
-      screen.getByText('Esta é a página inicial. Use o menu acima para navegar.')
-    ).toBeInTheDocument();
+    // Como "/" faz Navigate to="/login", devemos ver a página de login
+    expect(screen.getByText('Login Page')).toBeInTheDocument();
   });
 
   test('renderiza Sidebar em rota desconhecida', () => {
