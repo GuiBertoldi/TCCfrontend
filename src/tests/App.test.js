@@ -40,7 +40,6 @@ describe('App Routing', () => {
         <App />
       </MemoryRouter>
     );
-    // Como "/" faz Navigate to="/login", devemos ver a página de login
     expect(screen.getByText('Login Page')).toBeInTheDocument();
   });
 
