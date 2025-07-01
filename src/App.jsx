@@ -1,5 +1,5 @@
 import React from 'react';
-import { Routes, Route } from 'react-router-dom';
+import { Routes, Route, Navigate } from 'react-router-dom';
 import './App.css';
 import Sidebar from './components/sidebar/sidebar';
 import Login from './pages/login/login';
@@ -18,17 +18,8 @@ function App() {
   return (
     <ConfigProvider>
       <Routes>
+        <Route path="/" element={<Navigate to="/login" replace />} />
         <Route path="/login" element={<Login />} />
-        
-        <Route
-          index
-          element={
-            <div className="app-content">
-              <h1>Bem-vindo ao Sistema</h1>
-              <p>Esta é a página inicial. Use o menu acima para navegar.</p>
-            </div>
-          }
-        />
 
         <Route >
           <Route path="/*" element={<Sidebar />} />
