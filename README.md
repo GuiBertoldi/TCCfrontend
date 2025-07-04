@@ -88,7 +88,7 @@ Este repositório utiliza **GitHub Actions** para automação de **build**, **te
    - O deploy garante que o **frontend React** seja atualizado de maneira contínua, refletindo as últimas mudanças no ambiente de produção.
 
 5. **Monitoramento com Grafana**:
-   - Após o deploy, os dados de uso e desempenho da aplicação são coletados e integrados ao **Grafana** para visualização e monitoramento em tempo real.
+   - Após o deploy, os dados de uso e desempenho da aplicação são coletados e integrados ao **Grafana** junto a aws, para visualização e monitoramento em tempo real.
 
 ---
 
