@@ -15,7 +15,7 @@ O objetivo deste projeto é fornecer uma aplicação web intuitiva para psicólo
 - O gerenciamento de agendamentos.
 - A configuração de horários de atendimento dos psicólogos.
 
----
+----
 
 ## 2. **Tecnologias Utilizadas**
 
@@ -25,7 +25,7 @@ O objetivo deste projeto é fornecer uma aplicação web intuitiva para psicólo
 - **Material-UI**: Para a construção de componentes de interface com o usuário.
 - **Jest**: Framework de testes unitários.
 
----
+----
 
 ## 3. **Montagem do Ambiente Local**
 
@@ -64,7 +64,7 @@ npm start
 
 A aplicação estará disponível em `http://localhost:3000`.
 
----
+----
 
 ## 4. **CI/CD com GitHub Actions**
 
@@ -90,7 +90,7 @@ Este repositório utiliza **GitHub Actions** para automação de **build**, **te
 5. **Monitoramento com Grafana**:
    - Após o deploy, os dados de uso e desempenho da aplicação são coletados e integrados ao **Grafana** junto a aws, para visualização e monitoramento em tempo real.
 
----
+----
 
 ## 5. **Considerações de Segurança**
 
