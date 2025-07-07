@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { Form, Input, Button, Row, Col, DatePicker, Select, message, Modal } from 'antd';
 import dayjs from 'dayjs';
 import {jwtDecode} from 'jwt-decode';
+import { useNavigate } from "react-router-dom";
 import { fetchPatientsByUserId, fetchUserById } from '../../services/patient-service';
 import { createSession } from '../../services/sessions-service';
 import TreatmentManager from '../../components/TreatmentManager/TreatmentManager';
@@ -16,6 +17,7 @@ export default function SessionForm() {
   const [treatmentModalOpen, setTreatmentModalOpen] = useState(false);
   const [followupModalOpen, setFollowupModalOpen] = useState(false);
   const token = localStorage.getItem('token');
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!token) {
