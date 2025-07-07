@@ -66,6 +66,7 @@ export default function SessionForm() {
       await createSession(payload);
       message.success('Sessão criada com sucesso!');
       form.resetFields();
+      navigate("/patients");
     } catch {
       message.error('Erro ao criar sessão.');
     }
