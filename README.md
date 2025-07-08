@@ -97,4 +97,5 @@ Este repositório utiliza **GitHub Actions** para automação de **build**, **te
 **Armazenamento Seguro de Dados**
 - Utilizar **HTTPS** para comunicação entre o frontend e o backend.
 - Certificar-se de que **dados sensíveis** (como informações de login) sejam protegidos adequadamente.
+- LGPD: Por ora, o sistema ainda não está de acordo com a LGPD nem com as regras específicas de sistemas de saúde, que são regras rígidas e especificas para esse determinado nicho. É necessário um tratamento de dados mais rigoroso, pois lida com dados sensíveis e confidenciais de paciente/psicólogo. Será o principal ponto a ser focado no fururo, para que se torne um produto viável. No momento o sistema é um MVP, que não trata dados reais, por conta da necessidade da aplicação das regras da LGPD.
 
